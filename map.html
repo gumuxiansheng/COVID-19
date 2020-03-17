@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>圆形样式散点图</title>
+</head>
+<script charset="utf-8"
+    src="https://map.qq.com/api/gljs?v=1.exp&key=KNHBZ-SNFCD-JCC4P-HAWVD-A2KOO-OOBHO&libraries=visualization"></script>
+<style type="text/css">
+    html,
+    body {
+        height: 100%;
+        margin: 0px;
+        padding: 0px;
+    }
+
+    #container {
+        width: 100%;
+        height: 100%;
+    }
+</style>
+
+<body onload="initMap()">
+    <div id="container"></div>
+    <script src="data/dot.js"></script>
+    <script>
+        function initMap() {
+            var center = new TMap.LatLng(30.506843, 114.300335);
+
+            dot_store_Data = [{ 'lat': 30.589509, 'lng': 114.300335 },
+            { 'lat': 30.506843, 'lng': 114.241888 },
+            { 'lat': 30.81081, 'lng': 114.226873 },
+            { 'lat': 30.634988, 'lng': 114.292486 },
+            { 'lat': 30.55423, 'lng': 114.2185 },
+            { 'lat': 30.841568, 'lng': 114.807981 },
+            { 'lat': 30.57813, 'lng': 114.03364 },
+            { 'lat': 30.882697, 'lng': 114.377555 },
+            { 'lat': 30.34257, 'lng': 114.31341 },
+            { 'lat': 30.50054, 'lng': 114.34295 },
+            { 'lat': 30.63116, 'lng': 114.39569 },
+            { 'lat': 30.60574, 'lng': 114.2755 },
+            { 'lat': 30.65144, 'lng': 114.13959 },
+            { 'lat': 30.55385, 'lng': 114.315679 },
+            { 'lat': 30.58229, 'lng': 114.21491 },
+            { 'lat': 30.50574, 'lng': 114.167526 }]
+            dot_store_Data.forEach(function (item,index) {
+                item.styleId = 'storehouse';
+            });
+            dot_fangcang_Data = [{ 'lat': 30.837821, 'lng': 114.808144 }, { 'lat': 30.59863, 'lng': 114.42504 }, { 'lat': 30.681784, 'lng': 114.36632 }, { 'lat': 30.545917, 'lng': 114.334634 }, { 'lat': 30.524705, 'lng': 114.342449 }, { 'lat': 30.621089, 'lng': 114.228881 }, { 'lat': 30.577, 'lng': 114.260066 }, { 'lat': 30.500686, 'lng': 114.171899 }, { 'lat': 30.612412, 'lng': 114.388901 }, { 'lat': 30.39347, 'lng': 114.426479 }, { 'lat': 30.90544, 'lng': 114.360695 }, { 'lat': 30.641, 'lng': 114.284711 }, { 'lat': 30.502381, 'lng': 114.059876 }, { 'lat': 30.507009, 'lng': 114.242098 }, { 'lat': 30.580293, 'lng': 114.273331 }, { 'lat': 30.699498, 'lng': 114.235175 }, { 'lat': 30.452971, 'lng': 114.163264 }, { 'lat': 30.490452, 'lng': 114.509388 }, { 'lat': 30.357564, 'lng': 114.348006 }, { 'lat': 30.569881, 'lng': 114.219133 }]
+            dot_fangcang_Data.forEach(function (item,index) {
+                item.styleId = 'fangcang';
+            });
+            dot_huolei_Data = [{ 'lat': 30.527887, 'lng': 114.087392, 'content':'XXX' }, { 'lat': 30.430179, 'lng': 114.291359 }]
+            dot_huolei_Data.forEach(function (item,index) {
+                item.styleId = 'huolei';
+            });
+            dot_core_Data = [{ 'lat': 30.57702, 'lng': 114.02759 }, { 'lat': 30.561282, 'lng': 114.04347 }, { 'lat': 30.648869, 'lng': 114.132874 }, { 'lat': 30.548545, 'lng': 114.112783 }, { 'lat': 30.314335, 'lng': 114.07301 }, { 'lat': 30.3013, 'lng': 114.07676 }, { 'lat': 30.492572, 'lng': 114.173958 }, { 'lat': 30.59275, 'lng': 114.204566 }, { 'lat': 30.716671, 'lng': 114.260486 }, { 'lat': 30.51957, 'lng': 114.21434 }, { 'lat': 30.581195, 'lng': 114.253381 }, { 'lat': 30.548535, 'lng': 114.245788 }, { 'lat': 30.666798, 'lng': 114.285062 }, { 'lat': 30.613907, 'lng': 114.273173 }, { 'lat': 30.607233, 'lng': 114.273383 }, { 'lat': 30.623204, 'lng': 114.285622 }, { 'lat': 30.572263, 'lng': 114.272389 }, { 'lat': 30.547532, 'lng': 114.271386 }, { 'lat': 30.600141, 'lng': 114.290395 }, { 'lat': 30.887774, 'lng': 114.370661 }, { 'lat': 30.625517, 'lng': 114.300232 }, { 'lat': 30.871935, 'lng': 114.376293 }, { 'lat': 30.603715, 'lng': 114.305821 }, { 'lat': 30.863733, 'lng': 114.393801 }, { 'lat': 30.580984, 'lng': 114.328199 }, { 'lat': 30.602685, 'lng': 114.342288 }, { 'lat': 30.524819, 'lng': 114.326415 }, { 'lat': 30.541887, 'lng': 114.331832 }, { 'lat': 30.531232, 'lng': 114.344952 }, { 'lat': 30.623763, 'lng': 114.379557 }, { 'lat': 30.37107, 'lng': 114.32095 }, { 'lat': 30.343161, 'lng': 114.317775 }, { 'lat': 30.521086, 'lng': 114.366973 }, { 'lat': 30.65692, 'lng': 114.43364 }, { 'lat': 30.498925, 'lng': 114.41119 }, { 'lat': 30.44, 'lng': 114.44126 }, { 'lat': 30.85184, 'lng': 114.80466 }, { 'lat': 30.84355, 'lng': 114.80403 }]
+            dot_core_Data.forEach(function (item,index) {
+                item.styleId = 'core';
+            });
+            dot_fever_Data = [{ 'lat': 30.57183, 'lng': 114.0323 }, { 'lat': 30.637524, 'lng': 114.154173 }, { 'lat': 30.546915, 'lng': 114.211249 }, { 'lat': 30.62827, 'lng': 114.265529 }, { 'lat': 30.569122, 'lng': 114.254033 }, { 'lat': 30.579362, 'lng': 114.26059 }, { 'lat': 30.5658, 'lng': 114.266861 }, { 'lat': 30.584277, 'lng': 114.274832 }, { 'lat': 30.606478, 'lng': 114.287183 }, { 'lat': 30.582964, 'lng': 114.282386 }, { 'lat': 30.582964, 'lng': 114.282386 }, { 'lat': 30.60308, 'lng': 114.28779 }, { 'lat': 30.581211, 'lng': 114.294894 }, { 'lat': 30.581211, 'lng': 114.294894 }, { 'lat': 30.588484, 'lng': 114.297764 }, { 'lat': 30.61487, 'lng': 114.30901 }, { 'lat': 30.535251, 'lng': 114.298945 }, { 'lat': 30.540548, 'lng': 114.302771 }, { 'lat': 30.550532, 'lng': 114.309845 }, { 'lat': 30.544322, 'lng': 114.313998 }, { 'lat': 30.553486, 'lng': 114.352951 }, { 'lat': 30.52744, 'lng': 114.352226 }, { 'lat': 30.631234, 'lng': 114.380535 }, { 'lat': 30.35346, 'lng': 114.319685 }, { 'lat': 30.63215, 'lng': 114.403489 }, { 'lat': 30.505842, 'lng': 114.377652 }, { 'lat': 30.65692, 'lng': 114.43364 }, { 'lat': 30.506315, 'lng': 114.408101 }, { 'lat': 30.57462, 'lng': 114.4625 }, { 'lat': 30.44, 'lng': 114.44126 }, { 'lat': 30.48767, 'lng': 114.463644 }, { 'lat': 30.676869, 'lng': 114.583257 }]
+            dot_fever_Data.forEach(function (item,index) {
+                item.styleId = 'fever';
+            });
+
+            //初始化地图
+            var map = new TMap.Map("container", {
+                zoom: 10,//设置地图缩放级别
+                center: center,//设置地图中心点坐标
+                mapStyleId: "DARK" //个性化样式
+            });
+            //初始化散点图并添加至map图层
+            var dot = new TMap.visualization.Dot({
+                styles: {
+                    storehouse: {
+                        type: "circle", //圆形样式
+                        fillColor: "#00FF00", //填充颜色
+                        alpha: 0.6,
+                        strokeColor: "#FFFFFF",//边线颜色
+                        strokeWidth: 1, //边线宽度
+                        radius: 5 //原型半径
+                    },
+                    fangcang: {
+                        type: "circle", //圆形样式
+                        fillColor: "#FF0000", //填充颜色
+                        strokeColor: "#FFFFFF",//边线颜色
+                        strokeWidth: 1, //边线宽度
+                        radius: 5 //原型半径
+                    },
+                    huolei: {
+                        type: "circle", //圆形样式
+                        fillColor: "#FFFF00", //填充颜色
+                        strokeColor: "#FFFFFF",//边线颜色
+                        strokeWidth: 1, //边线宽度
+                        radius: 7 //原型半径
+                    },
+                    core: {
+                        type: "circle", //圆形样式
+                        fillColor: "#FF0000", //填充颜色
+                        strokeColor: "#FFFFFF",//边线颜色
+                        strokeWidth: 1, //边线宽度
+                        radius: 5 //原型半径
+                    },
+                    fever: {
+                        type: "circle", //圆形样式
+                        fillColor: "#FF00FF", //填充颜色
+                        strokeColor: "#FFFFFF",//边线颜色
+                        strokeWidth: 1, //边线宽度
+                        radius: 4 //原型半径
+                    }
+                },
+                faceTo: "screen",//散点固定的朝向
+
+            }).addTo(map);
+
+            dot.setData(dot_store_Data.concat(dot_fangcang_Data).concat(dot_huolei_Data).concat( dot_core_Data).concat(dot_fever_Data));//设置数据
+        }
+    </script>
+</body>
+
+</html>
