@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(Hello VERSION 0.1.0)
 
-find_package(ortools CONFIG REQUIRED)
+add_subdirectory(or-tools)
 
 add_executable(Hello hello.cpp)
 target_compile_features(Hello PRIVATE cxx_std_11)
