@@ -2,3 +2,4 @@
 output/*
 build/*
 cmake-build-debug/*
+ortoolsbuild/*
