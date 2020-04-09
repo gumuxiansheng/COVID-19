@@ -5,11 +5,14 @@
 #include "ortools/constraint_solver/routing_index_manager.h"
 #include "ortools/constraint_solver/routing_parameters.h"
 
+#include "utils/file_util.h"
+#include "utils/distance_util.h"
+
 namespace operations_research
 {
 struct DataModel
 {
-    const std::vector<std::vector<int64>> distance_matrix{
+    std::vector<std::vector<int64>> distance_matrix{
         {0, 548, 776, 696, 582, 274, 502, 194, 308, 194, 536, 502, 388, 354, 468,
          776, 662},
         {548, 0, 684, 308, 194, 502, 730, 354, 696, 742, 1084, 594, 480, 674,
@@ -45,8 +48,8 @@ struct DataModel
         {662, 1210, 754, 1358, 1244, 708, 480, 856, 514, 468, 354, 844, 730, 536,
          194, 798, 0},
     };
-    const int num_vehicles = 4;
-    const RoutingIndexManager::NodeIndex depot{0};
+    int num_vehicles = 4;
+    RoutingIndexManager::NodeIndex depot{0};
 };
 
 //! @brief Print the solution.
@@ -81,10 +84,12 @@ void PrintSolution(const DataModel &data, const RoutingIndexManager &manager,
     LOG(INFO) << "Problem solved in " << routing.solver()->wall_time() << "ms";
 }
 
-void VrpGlobalSpan()
+void VrpGlobalSpan(std::vector<std::vector<int64_t>> distances)
 {
     // Instantiate the data problem.
     DataModel data;
+    data.distance_matrix = distances;
+    data.num_vehicles = 3;
 
     // Create Routing Index Manager
     RoutingIndexManager manager(data.distance_matrix.size(), data.num_vehicles,
@@ -126,6 +131,25 @@ void VrpGlobalSpan()
 
 int main(int argc, char **argv)
 {
-    operations_research::VrpGlobalSpan();
+    std::string file_url;
+    std::cout << "please enter the Christofides file url:" << std::endl;
+    std::cin >> file_url;
+
+    // std::string file_url = "/Volumes/Mike_External/Dev/COVID-19/data/demo/Christofides_1_50.txt";
+
+    std::vector<std::vector<int64_t>> locations = covid19::ReadChristofides(file_url);
+    std::vector<std::vector<int64_t>> distances = covid19::CalcDistances(locations);
+
+    // // print result
+    // for (size_t i = 0; i < distances.size(); i++)
+    // {
+    //     for (size_t j = 0; j < distances[i].size(); j++)
+    //     {
+    //         std::cout << distances[i][j] << "  ";
+    //     }
+    //     std::cout << std::endl;
+    // }
+
+    operations_research::VrpGlobalSpan(distances);
     return EXIT_SUCCESS;
 }

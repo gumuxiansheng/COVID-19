@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.0.0)
-set(PROJECT_NAME Hello)
+set(PROJECT_NAME VRP)
 project(${PROJECT_NAME} VERSION 0.1.0)
 
-add_executable(${PROJECT_NAME} src/hello.cc src/utils/file_util.cc)
+add_executable(${PROJECT_NAME} src/vrp.cc src/utils/file_util.cc src/utils/distance_util.cc)
 
 set(ORTOOLS_BUILD_DIR ${PROJECT_SOURCE_DIR}/ortoolsbuild/usr/local)
 
