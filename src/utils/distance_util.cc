@@ -21,6 +21,12 @@ public:
 };
 
 std::vector<std::vector<int64_t>> CalcDistances(
+    const std::vector<std::vector<int64_t>> locations)
+{
+    return CalcDistances(locations, DistanceManhattan());
+}
+
+std::vector<std::vector<int64_t>> CalcDistances(
     const std::vector<std::vector<int64_t>> locations, DistanceType disttype)
 {
     if (disttype == DistanceType::euclidean)

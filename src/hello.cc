@@ -44,9 +44,10 @@ int main()
 {
   // operations_research::run();
 
-  std::string file_url;
-  std::cout<<"please enter the file url:"<<std::endl;
-  std::cin>>file_url;
+  std::string file_url = "/Volumes/Mike_External/Dev/COVID-19/data/demo/Christofides_1_50.txt";
+  // std::string file_url;
+  // std::cout<<"please enter the file url:"<<std::endl;
+  // std::cin>>file_url;
 
   covid19::ReadChristofides(file_url);
   return EXIT_SUCCESS;

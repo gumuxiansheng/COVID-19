@@ -20,6 +20,9 @@ enum class DistanceType
 };
 
 std::vector<std::vector<int64_t>> CalcDistances(
+    const std::vector<std::vector<int64_t>> locations);
+
+std::vector<std::vector<int64_t>> CalcDistances(
     const std::vector<std::vector<int64_t>> locations, DistanceType disttype);
 
 std::vector<std::vector<int64_t>> CalcDistances(
