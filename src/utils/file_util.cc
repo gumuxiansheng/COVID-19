@@ -2,7 +2,7 @@
 
 namespace covid19
 {
-std::vector<std::vector<int64_t>> ReadChristofides(const std::string file_name)
+std::vector<std::vector<int64_t>> ReadChristofides(const std::string& file_name)
 {
     std::cout << "Hello ReadChristofides" << std::endl;
     std::vector<std::vector<int64_t>> locations;

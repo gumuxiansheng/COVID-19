@@ -1,7 +1,6 @@
 #ifndef COVID19_DISTANCE_H_
 #define COVID19_DISTANCE_H_
 
-#include <math.h>
 #include <iostream>
 #include <vector>
 
@@ -10,7 +9,7 @@ namespace covid19
 class DistanceAlgorithm
 {
 public:
-    int64_t virtual CalcDistance(int64_t x1, int64_t y1, int64_t x2, int64_t y2)=0;
+    virtual int64_t CalcDistance(int64_t x1, int64_t y1, int64_t x2, int64_t y2)=0;
 };
 
 enum class DistanceType
@@ -20,13 +19,13 @@ enum class DistanceType
 };
 
 std::vector<std::vector<int64_t>> CalcDistances(
-    const std::vector<std::vector<int64_t>> locations);
+    const std::vector<std::vector<int64_t>>& locations);
 
 std::vector<std::vector<int64_t>> CalcDistances(
-    const std::vector<std::vector<int64_t>> locations, DistanceType disttype);
+    const std::vector<std::vector<int64_t>>& locations, DistanceType disttype);
 
 std::vector<std::vector<int64_t>> CalcDistances(
-    const std::vector<std::vector<int64_t>> locations,
+    const std::vector<std::vector<int64_t>>& locations,
     DistanceAlgorithm *algorithm);
 } // namespace covid19
 

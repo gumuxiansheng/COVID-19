@@ -8,7 +8,7 @@
 
 namespace covid19
 {
-std::vector<std::vector<int64_t>> ReadChristofides(std::string file_name);
+std::vector<std::vector<int64_t>> ReadChristofides(const std::string& file_name);
 
 } // namespace covid19
 

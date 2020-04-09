@@ -1,3 +1,4 @@
+#include <cmath>
 #include "distance_util.h"
 
 namespace covid19
@@ -21,18 +22,18 @@ public:
 };
 
 std::vector<std::vector<int64_t>> CalcDistances(
-    const std::vector<std::vector<int64_t>> locations)
+    const std::vector<std::vector<int64_t>>& locations)
 {
-    DistanceAlgorithm *dis_algorithm = new DistanceManhattan;
+    auto *dis_algorithm = new DistanceManhattan;
     return CalcDistances(locations, dis_algorithm);
 }
 
 std::vector<std::vector<int64_t>> CalcDistances(
-    const std::vector<std::vector<int64_t>> locations, DistanceType disttype)
+    const std::vector<std::vector<int64_t>>& locations, DistanceType disttype)
 {
     if (disttype == DistanceType::euclidean)
     {
-        DistanceEuclidean *dis_algorithm = new DistanceEuclidean;
+        auto *dis_algorithm = new DistanceEuclidean;
         return CalcDistances(locations, dis_algorithm);
     }
     else if (disttype == DistanceType::manhattan)
@@ -50,7 +51,7 @@ std::vector<std::vector<int64_t>> CalcDistances(
 }
 
 std::vector<std::vector<int64_t>> CalcDistances(
-    const std::vector<std::vector<int64_t>> locations,
+    const std::vector<std::vector<int64_t>>& locations,
     DistanceAlgorithm *algorithm)
 {
     int N = locations.size();
