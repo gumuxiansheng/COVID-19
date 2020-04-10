@@ -5,15 +5,18 @@
 #include "ortools/constraint_solver/routing_index_manager.h"
 #include "ortools/constraint_solver/routing_parameters.h"
 
+#include "utils/file_util.h"
+#include "utils/distance_util.h"
+
 namespace operations_research
 {
 struct DataModel
 {
-    const std::vector<std::vector<int64>> distance_matrix{};
-    const std::vector<int64> demands{};
-    const std::vector<int64> vehicle_capacities{15, 15, 15, 15};
-    const int num_vehicles = 4;
-    const RoutingIndexManager::NodeIndex depot{0};
+    std::vector<std::vector<int64>> distance_matrix{};
+    std::vector<int64> demands{};
+    std::vector<int64> vehicle_capacities{15, 15, 15, 15};
+    int num_vehicles = 4;
+    RoutingIndexManager::NodeIndex depot{0};
 };
 
 //! @brief Print the solution.
@@ -56,10 +59,25 @@ void PrintSolution(const DataModel &data, const RoutingIndexManager &manager,
     LOG(INFO) << "Problem solved in " << routing.solver()->wall_time() << "ms";
 }
 
+DataModel initDataModel(){
+    DataModel data;
+
+    std::string file_url;
+    std::cout << "please enter the Christofides file url:" << std::endl;
+    std::cin >> file_url;
+
+    std::vector<std::vector<int64_t>> locations = covid19::ReadChristofides(file_url);
+    std::vector<std::vector<int64_t>> distances = covid19::CalcDistances(locations);
+
+    data.distance_matrix = std::move(distances);
+    data.num_vehicles = 3;
+
+    return data;
+}
+
 void VrpCapacity()
 {
-    // Instantiate the data problem.
-    DataModel data;
+    DataModel data = initDataModel();
 
     // Create Routing Index Manager
     RoutingIndexManager manager(data.distance_matrix.size(), data.num_vehicles,
