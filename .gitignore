@@ -1,5 +1,13 @@
 .vscode/*
+.vs/*
+.idea/*
 output/*
 build/*
 cmake-build-debug/*
+out/*
 ortoolsbuild/*
+.DS_Store
+CMakeSettings.json
+
+/.idea
+/.vs
