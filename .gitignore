@@ -5,6 +5,7 @@ output/*
 build/*
 cmake-build-debug/*
 out/*
+ortoolsbuilds_multiple/*
 ortoolsbuild/*
 .DS_Store
 CMakeSettings.json

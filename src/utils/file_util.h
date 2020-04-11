@@ -8,7 +8,15 @@
 
 namespace covid19
 {
-std::vector<std::vector<int64_t>> ReadChristofides(const std::string& file_name);
+struct ChristofidesDataModel
+{
+    int capacity = 1;
+    std::vector<std::vector<int64_t>> nodes{};
+};
+
+ChristofidesDataModel ReadChristofides(const std::string &file_name);
+
+std::vector<int64_t> GetChristofidesRequirements(std::vector<std::vector<int64_t>> nodes);
 
 } // namespace covid19
 

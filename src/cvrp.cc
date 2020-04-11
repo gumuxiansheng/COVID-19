@@ -1,4 +1,5 @@
 #include <vector>
+#include <numeric>
 
 #include "ortools/constraint_solver/routing.h"
 #include "ortools/constraint_solver/routing_enums.pb.h"
@@ -14,8 +15,8 @@ struct DataModel
 {
     std::vector<std::vector<int64>> distance_matrix{};
     std::vector<int64> demands{};
-    std::vector<int64> vehicle_capacities{15, 15, 15, 15};
-    int num_vehicles = 4;
+    std::vector<int64> vehicle_capacities{1};
+    int num_vehicles = 1;
     RoutingIndexManager::NodeIndex depot{0};
 };
 
@@ -36,7 +37,7 @@ void PrintSolution(const DataModel &data, const RoutingIndexManager &manager,
         int64 route_distance{0};
         int64 route_load{0};
         std::stringstream route;
-        while (routing.IsEnd(index) == false)
+        while (!routing.IsEnd(index))
         {
             int64 node_index = manager.IndexToNode(index).value();
             route_load += data.demands[node_index];
@@ -66,11 +67,15 @@ DataModel initDataModel(){
     std::cout << "please enter the Christofides file url:" << std::endl;
     std::cin >> file_url;
 
-    std::vector<std::vector<int64_t>> locations = covid19::ReadChristofides(file_url);
-    std::vector<std::vector<int64_t>> distances = covid19::CalcDistances(locations);
+    covid19::ChristofidesDataModel christofides_data = covid19::ReadChristofides(file_url);
+    std::vector<std::vector<int64_t>> distances = covid19::CalcDistances(christofides_data.nodes);
 
     data.distance_matrix = std::move(distances);
-    data.num_vehicles = 3;
+    data.demands = std::move(covid19::GetChristofidesRequirements(christofides_data.nodes));
+    int sum_demands = accumulate(data.demands.begin(), data.demands.end(), 0);
+    data.num_vehicles = sum_demands/christofides_data.capacity + 1;
+    data.vehicle_capacities.clear();
+    data.vehicle_capacities.assign(data.num_vehicles, christofides_data.capacity);
 
     return data;
 }

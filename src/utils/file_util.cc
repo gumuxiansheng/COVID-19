@@ -43,10 +43,12 @@ Medium:
 Large ones:
     Li_n: k=21,..32, n=560,...,1200
 */
-std::vector<std::vector<int64_t>> ReadChristofides(const std::string& file_name)
+ChristofidesDataModel ReadChristofides(const std::string &file_name)
 {
+    ChristofidesDataModel reData;
+
     std::cout << "Read in ReadChristofides" << std::endl;
-    std::vector<std::vector<int64_t>> locations;
+    std::vector<std::vector<int64_t>> nodes;
     std::fstream read_in_file;
     read_in_file.open(file_name, std::ios::in);
     if (read_in_file.is_open())
@@ -58,6 +60,24 @@ std::vector<std::vector<int64_t>> ReadChristofides(const std::string& file_name)
             if (line_index == 0)
             {
                 std::cout << "STARTL: " + line_str << "\n"; //print the data info at line 1
+
+                std::string loc_t_s;
+                int space_count = 0;
+                for (size_t i = 0; i < line_str.size() + 1; i++)
+                {
+                    if (line_str[i] == ' ')
+                    {
+                        if (++space_count == 2)
+                        {
+                            reData.capacity = std::stoi(loc_t_s);
+                        }
+                        loc_t_s = "";
+                    }
+                    else
+                    {
+                        loc_t_s.append(1, line_str[i]);
+                    }
+                }
             }
             else
             {
@@ -75,7 +95,7 @@ std::vector<std::vector<int64_t>> ReadChristofides(const std::string& file_name)
                         loc_t_s.append(1, line_str[i]);
                     }
                 }
-                locations.push_back(loc_vec);
+                nodes.push_back(loc_vec);
             }
 
             line_index++;
@@ -87,17 +107,30 @@ std::vector<std::vector<int64_t>> ReadChristofides(const std::string& file_name)
         std::cerr << "ReadChristofides read file failed." << std::endl;
     }
 
+    reData.nodes = nodes;
+
     // // print result
-    // for (size_t i = 0; i < locations.size(); i++)
+    // for (size_t i = 0; i < nodes.size(); i++)
     // {
-    //     for (size_t j = 0; j < locations[i].size(); j++)
+    //     for (size_t j = 0; j < nodes[i].size(); j++)
     //     {
-    //         std::cout << locations[i][j] << "  ";
+    //         std::cout << nodes[i][j] << "  ";
     //     }
     //     std::cout << std::endl;
     // }
 
-    return locations;
+    return reData;
+}
+
+std::vector<int64_t> GetChristofidesRequirements(std::vector<std::vector<int64_t>> nodes)
+{
+    std::vector<int64_t> requirements{};
+    for (size_t i = 0; i < nodes.size(); i++)
+    {
+        requirements.push_back(nodes[i][2]);
+    }
+    
+    return requirements;
 }
 
 } // namespace covid19

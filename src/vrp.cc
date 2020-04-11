@@ -103,7 +103,8 @@ int main(int argc, char **argv)
 
     // std::string file_url = "/Volumes/Mike_External/Dev/COVID-19/data/demo/Christofides_1_50.txt";
 
-    std::vector<std::vector<int64_t>> locations = covid19::ReadChristofides(file_url);
+    covid19::ChristofidesDataModel christofides_data = covid19::ReadChristofides(file_url);
+    std::vector<std::vector<int64_t>> locations = christofides_data.nodes;
     std::vector<std::vector<int64_t>> distances = covid19::CalcDistances(locations);
 
     // // print result
