@@ -67,4 +67,27 @@ std::vector<std::vector<int64_t>> CalcDistances(
     }
     return distances;
 }
+
+/*
+function: CalcDistanceCost
+! @brief: calculate the total distance for the permutation.
+! @param [in]: nodes_permutation, the permutation of one trip, e.g. {0, 2, 5, 1, 3, 4, 0}, the first element is the start node index and the last is the end node index.
+! @param [in]: distances, distances matrix between any two nodes.
+! @param [out]: the total distance for this trip.
+*/
+int64_t CalcDistanceCost(const std::vector<int64_t>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances)
+{
+    const int NODES_SIZE = distances.size();
+    int64_t total_distance = 0;
+
+    for (int i = 0; i < NODES_SIZE; i++)
+    {
+        int start_node_index = nodes_permutation[i];
+        int end_node_index = nodes_permutation[i + 1];
+        total_distance += distances[start_node_index][end_node_index];
+    }
+
+    return total_distance;
+}
+
 } // namespace covid19
