@@ -1,4 +1,5 @@
 #include <cmath>
+#include <algorithm>
 #include "distance_util.h"
 
 namespace covid19
@@ -75,12 +76,12 @@ function: CalcDistanceCost
 ! @param [in]: distances, distances matrix between any two nodes.
 ! @param [out]: the total distance for this trip.
 */
-int64_t CalcDistanceCost(const std::vector<int64_t>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances)
+int64_t CalcDistanceCost(const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances)
 {
-    const int NODES_SIZE = distances.size();
+    const int ARCH_SIZE = nodes_permutation.size() - 1;
     int64_t total_distance = 0;
 
-    for (int i = 0; i < NODES_SIZE; i++)
+    for (int i = 0; i < ARCH_SIZE; i++)
     {
         int start_node_index = nodes_permutation[i];
         int end_node_index = nodes_permutation[i + 1];

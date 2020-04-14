@@ -10,7 +10,8 @@ set(ORTOOLS_BUILD_DIR ${PROJECT_SOURCE_DIR}/../ortoolsbuild/usr/local)
 
 foreach(EXECUTABLE
   vrp
-  cvrp)
+  cvrp
+  cvrp_raw)
   add_executable(${EXECUTABLE} ${EXECUTABLE}.cc utils/file_util.cc utils/distance_util.cc utils/requirements_util.cc algorithms/vns.cc algorithms/vns.h)
   target_include_directories(${EXECUTABLE} PUBLIC ${PARENT_SOURCE_DIR})
   target_compile_features(${EXECUTABLE} PRIVATE cxx_std_11)

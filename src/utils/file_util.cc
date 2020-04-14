@@ -125,9 +125,10 @@ ChristofidesDataModel ReadChristofides(const std::string &file_name)
 std::vector<int64_t> GetChristofidesRequirements(std::vector<std::vector<int64_t>> nodes)
 {
     std::vector<int64_t> requirements{};
-    for (size_t i = 0; i < nodes.size(); i++)
+    requirements.reserve(nodes.size());
+    for (auto & node : nodes)
     {
-        requirements.push_back(nodes[i][2]);
+        requirements.push_back(node[2]);
     }
     
     return requirements;

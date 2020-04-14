@@ -8,6 +8,9 @@
 #include <iostream>
 #include <vector>
 
+namespace covid19
+{
+
 /**
  * swap two nodes
  * @param nodes_permutation
@@ -60,5 +63,18 @@ std::vector<int> TwoOptSwap(const std::vector<int>& nodes_permutation, int swap_
  * @return
  */
 std::vector<int> TwoHOptSwap(const std::vector<int>& nodes_permutation, int swap_1, int swap_2);
+
+/**
+ * VNS(Variable Neighborhood Search)
+ * @param distances
+ * @param nodes_requirements
+ * @param capacity
+ * @param num_vehicles
+ * @param depot_index
+ * @return
+ */
+std::vector<int> Vns (const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, int num_vehicles, int depot_index);
+
+}
 
 #endif //HELLO_VNS_H_

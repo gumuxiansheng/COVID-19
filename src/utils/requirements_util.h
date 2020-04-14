@@ -13,7 +13,9 @@ namespace covid19
  * @param capacity each route's requirements should not exceed capacity.
  * @return if the route is valid, return true, else false
  */
-bool CheckRequirements(const std::vector<int64_t>& nodes_permutation, const std::vector<int64_t>& nodes_requirements, int64_t capacity);
+bool CheckRequirements(const std::vector<int>& nodes_permutation, const std::vector<int64_t>& nodes_requirements, int64_t capacity);
+
+int64_t CalcRequirements(const std::vector<int>& nodes_permutation, const std::vector<int64_t>& nodes_requirements);
 }
 
 #endif // COVID19_REQUIREMENTS_H_

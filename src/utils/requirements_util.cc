@@ -3,7 +3,7 @@
 namespace covid19
 {
 
-bool CheckRequirements(const std::vector<int64_t>& nodes_permutation, const std::vector<int64_t>& nodes_requirements, int64_t capacity)
+bool CheckRequirements(const std::vector<int>& nodes_permutation, const std::vector<int64_t>& nodes_requirements, int64_t capacity)
 {
     const int START_NODE_INDEX = nodes_permutation[0];
     int64_t current_requirements = 0;
@@ -14,7 +14,7 @@ bool CheckRequirements(const std::vector<int64_t>& nodes_permutation, const std:
 
         if (nodes_permutation[i] != START_NODE_INDEX)
         {
-            current_requirements += nodes_requirements[i];
+            current_requirements += nodes_requirements[nodes_permutation[i]];
             if (current_requirements > capacity)
             {
                 return false;
@@ -26,5 +26,18 @@ bool CheckRequirements(const std::vector<int64_t>& nodes_permutation, const std:
     }
 
     return true;
+}
+
+int64_t CalcRequirements(const std::vector<int>& nodes_permutation, const std::vector<int64_t>& nodes_requirements)
+{
+    int64_t current_requirements = 0;
+
+    for (int i : nodes_permutation)
+    {
+        current_requirements += nodes_requirements[i];
+
+    }
+
+    return current_requirements;
 }
 }
