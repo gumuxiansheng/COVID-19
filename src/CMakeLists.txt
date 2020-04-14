@@ -4,14 +4,26 @@ endif()
 
 project(covid19_or)
 
-SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/..)
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/..)
+
+foreach(EXECUTABLE
+  cvrp_raw)
+  add_executable(${EXECUTABLE} ${EXECUTABLE}.cc utils/file_util.cc utils/distance_util.cc utils/requirements_util.cc algorithms/vns.cc algorithms/vns.h)
+  target_include_directories(${EXECUTABLE} PUBLIC ${PARENT_SOURCE_DIR})
+  target_compile_features(${EXECUTABLE} PRIVATE cxx_std_11)
+endforeach()
+
+set(USE_OR_TOOLS TRUE)
+
+if (NOT USE_OR_TOOLS)
+  return()
+endif()
 
 set(ORTOOLS_BUILD_DIR ${PROJECT_SOURCE_DIR}/../ortoolsbuild/usr/local)
 
 foreach(EXECUTABLE
   vrp
-  cvrp
-  cvrp_raw)
+  cvrp)
   add_executable(${EXECUTABLE} ${EXECUTABLE}.cc utils/file_util.cc utils/distance_util.cc utils/requirements_util.cc algorithms/vns.cc algorithms/vns.h)
   target_include_directories(${EXECUTABLE} PUBLIC ${PARENT_SOURCE_DIR})
   target_compile_features(${EXECUTABLE} PRIVATE cxx_std_11)
