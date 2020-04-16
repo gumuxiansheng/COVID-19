@@ -29,6 +29,8 @@ std::vector<std::vector<int64_t>> CalcDistances(
     DistanceAlgorithm *algorithm);
 
 int64_t CalcDistanceCost(const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances);
+
+int64_t CalcDistanceCumCost(const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances, int depot_index);
 } // namespace covid19
 
 #endif // COVID19_DISTANCE_H_

@@ -23,14 +23,14 @@ public:
 };
 
 std::vector<std::vector<int64_t>> CalcDistances(
-    const std::vector<std::vector<int64_t>>& locations)
+    const std::vector<std::vector<int64_t>> &locations)
 {
     auto *dis_algorithm = new DistanceManhattan;
     return CalcDistances(locations, dis_algorithm);
 }
 
 std::vector<std::vector<int64_t>> CalcDistances(
-    const std::vector<std::vector<int64_t>>& locations, DistanceType disttype)
+    const std::vector<std::vector<int64_t>> &locations, DistanceType disttype)
 {
     if (disttype == DistanceType::euclidean)
     {
@@ -52,7 +52,7 @@ std::vector<std::vector<int64_t>> CalcDistances(
 }
 
 std::vector<std::vector<int64_t>> CalcDistances(
-    const std::vector<std::vector<int64_t>>& locations,
+    const std::vector<std::vector<int64_t>> &locations,
     DistanceAlgorithm *algorithm)
 {
     int N = locations.size();
@@ -62,7 +62,7 @@ std::vector<std::vector<int64_t>> CalcDistances(
         distances[i][i] = 0;
         for (size_t j = i + 1; j < N; j++)
         {
-            distances[i][j] = algorithm -> CalcDistance(locations[i][0], locations[i][1], locations[j][0], locations[j][1]);
+            distances[i][j] = algorithm->CalcDistance(locations[i][0], locations[i][1], locations[j][0], locations[j][1]);
             distances[j][i] = distances[i][j];
         }
     }
@@ -76,7 +76,7 @@ function: CalcDistanceCost
 ! @param [in]: distances, distances matrix between any two nodes.
 ! @param [out]: the total distance for this trip.
 */
-int64_t CalcDistanceCost(const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances)
+int64_t CalcDistanceCost(const std::vector<int> &nodes_permutation, const std::vector<std::vector<int64_t>> &distances)
 {
     const int ARCH_SIZE = nodes_permutation.size() - 1;
     int64_t total_distance = 0;
@@ -87,6 +87,37 @@ int64_t CalcDistanceCost(const std::vector<int>& nodes_permutation, const std::v
         int end_node_index = nodes_permutation[i + 1];
         total_distance += distances[start_node_index][end_node_index];
     }
+
+    return total_distance;
+}
+
+int64_t CalcDistanceCumCost(const std::vector<int> &nodes_permutation, const std::vector<std::vector<int64_t>> &distances, int depot_index)
+{
+    const int ARCH_SIZE = nodes_permutation.size() - 1;
+    int64_t total_distance = 0;
+    int64_t temp_distance = 0;
+
+    std::vector<int64_t> node_cum_distance{};
+    for (int i = 0; i < ARCH_SIZE; i++)
+    {
+        int start_node_index = nodes_permutation[i];
+        int end_node_index = nodes_permutation[i + 1];
+        if (end_node_index != depot_index)
+        {
+            temp_distance += distances[start_node_index][end_node_index];
+        }
+        else
+        {
+            temp_distance = 0;
+        }
+        node_cum_distance.push_back(temp_distance);
+    }
+
+    for (size_t i = 0; i < node_cum_distance.size(); i++)
+    {
+        total_distance += node_cum_distance[i];
+    }
+    
 
     return total_distance;
 }
