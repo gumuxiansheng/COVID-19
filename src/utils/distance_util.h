@@ -2,6 +2,7 @@
 #define COVID19_DISTANCE_H_
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 
 namespace covid19
@@ -31,6 +32,8 @@ std::vector<std::vector<int64_t>> CalcDistances(
 int64_t CalcDistanceCost(const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances);
 
 int64_t CalcDistanceCumCost(const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances, int depot_index);
+
+void WriteResults(const std::vector<int> &nodes_permutation, const std::string file_name);
 } // namespace covid19
 
 #endif // COVID19_DISTANCE_H_

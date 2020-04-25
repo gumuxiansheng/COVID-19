@@ -73,6 +73,8 @@ void PrintSolution(const DataModel &data, const std::vector<int> &solution)
     std::cout << std::endl;
     std::cout << "Total route distance: " << covid19::CalcDistanceCost(solution, data.distance_matrix) << std::endl;
     std::cout << "Total route min-sum distance: " << covid19::CalcDistanceCumCost(solution, data.distance_matrix, data.depot) << std::endl;
+
+    covid19::WriteResults(solution, "solution.txt");
 }
 
 void VrpCapacity()

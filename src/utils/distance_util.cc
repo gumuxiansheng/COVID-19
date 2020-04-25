@@ -117,9 +117,24 @@ int64_t CalcDistanceCumCost(const std::vector<int> &nodes_permutation, const std
     {
         total_distance += node_cum_distance[i];
     }
-    
 
     return total_distance;
+}
+
+void WriteResults(const std::vector<int> &nodes_permutation, const std::string file_name)
+{
+    std::ofstream outfile;
+    outfile.open(file_name);
+    if (!outfile.is_open())
+    {
+        std::cout << "file open failed" << std::endl;
+    }
+
+    for (size_t i = 0; i < nodes_permutation.size(); i++)
+    {
+        outfile << nodes_permutation[i] << " ";
+    }
+    
 }
 
 } // namespace covid19
