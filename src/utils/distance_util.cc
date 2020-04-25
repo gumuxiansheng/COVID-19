@@ -134,7 +134,7 @@ void WriteResults(const std::vector<int> &nodes_permutation, const std::string f
     {
         outfile << nodes_permutation[i] << " ";
     }
-    
+    outfile.close();
 }
 
 } // namespace covid19
