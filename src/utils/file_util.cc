@@ -112,6 +112,12 @@ ChristofidesDataModel ReadChristofides(const std::string &file_name)
     return reData;
 }
 
+/*
+function: GetChristofidesRequirements
+! @brief: get a list of the requirements from Christofides data.
+! @param[in]: nodes, Christofides data
+! @param[out]: the list of requirements
+*/
 std::vector<int64_t> GetChristofidesRequirements(std::vector<std::vector<int64_t>> nodes)
 {
     std::vector<int64_t> requirements{};
