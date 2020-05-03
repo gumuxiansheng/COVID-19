@@ -18,6 +18,8 @@ ChristofidesDataModel ReadChristofides(const std::string &file_name);
 
 std::vector<int64_t> GetChristofidesRequirements(std::vector<std::vector<int64_t>> nodes);
 
+std::vector<std::vector<int64_t>> ReadDistancesCSV(const std::string &file_name);
+
 } // namespace covid19
 
 #endif // COVID19_FILE_H_

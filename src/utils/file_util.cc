@@ -109,16 +109,6 @@ ChristofidesDataModel ReadChristofides(const std::string &file_name)
 
     reData.nodes = nodes;
 
-    // // print result
-    // for (size_t i = 0; i < nodes.size(); i++)
-    // {
-    //     for (size_t j = 0; j < nodes[i].size(); j++)
-    //     {
-    //         std::cout << nodes[i][j] << "  ";
-    //     }
-    //     std::cout << std::endl;
-    // }
-
     return reData;
 }
 
@@ -126,12 +116,64 @@ std::vector<int64_t> GetChristofidesRequirements(std::vector<std::vector<int64_t
 {
     std::vector<int64_t> requirements{};
     requirements.reserve(nodes.size());
-    for (auto & node : nodes)
+    for (auto &node : nodes)
     {
         requirements.push_back(node[2]);
     }
-    
+
     return requirements;
+}
+
+/*
+function: ReadDistancesCSV
+! @brief: read in csv file to distances matrix.
+! @param[in]: file_name, file to be read
+! @param[out]: matrix for bilateral distances
+*/
+std::vector<std::vector<int64_t>> ReadDistancesCSV(const std::string &file_name)
+{
+
+    std::cout << "Read in CSV" << std::endl;
+    std::vector<std::vector<int64_t>> distances;
+    std::fstream read_in_file;
+    read_in_file.open(file_name, std::ios::in);
+    if (read_in_file.is_open())
+    { //checking whether the file is open
+        std::string line_str;
+        int line_index = 0;
+        while (getline(read_in_file, line_str))
+        {
+            if (line_index == 0)
+            {
+                continue; // ignore the head
+            }
+
+            std::vector<int64_t> loc_vec;
+            std::string loc_t_s;
+            for (size_t i = 1; i < line_str.size() + 1; i++)
+            { // ignore the index
+                if (i == line_str.size() || line_str[i] == ',')
+                {
+                    loc_vec.push_back(std::stoi(loc_t_s));
+                    loc_t_s = "";
+                }
+                else
+                {
+                    loc_t_s.append(1, line_str[i]);
+                }
+            }
+            distances.push_back(loc_vec);
+
+            line_index++;
+        }
+        read_in_file.close(); //close the file object.
+    }
+    else
+    {
+        std::cerr << "CSV read failed." << std::endl;
+    }
+
+    return distances;
 }
 
 } // namespace covid19
