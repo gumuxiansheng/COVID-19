@@ -52,7 +52,7 @@ void PrintSolution(const DataModel &data, const std::vector<int> &solution)
         if (index == 0) {
             if (sub_solution.size() != 1){
                 std::cout << index << " Load(" << data.demands[index] << ")" << std::endl;
-                std::cout << "Travel " << num_travel << "'s distance: " << covid19::CalcDistanceCost(sub_solution, data.distance_matrix) << std::endl;
+                std::cout << "Travel " << num_travel << "'s distance: " << covid19::CalcDistanceCost(sub_solution, data.distance_matrix, data.depot) << std::endl;
                 std::cout << "Travel " << num_travel << "'s min-sum distance: " << covid19::CalcDistanceCumCost(sub_solution, data.distance_matrix, data.depot) << std::endl;
                 std::cout << "Travel " << num_travel << "'s load: " << covid19::CalcRequirements(sub_solution, data.demands) << std::endl;
                 sub_solution.clear();
@@ -70,7 +70,7 @@ void PrintSolution(const DataModel &data, const std::vector<int> &solution)
     }
 
     std::cout << std::endl;
-    std::cout << "Total route distance: " << covid19::CalcDistanceCost(solution, data.distance_matrix) << std::endl;
+    std::cout << "Total route distance: " << covid19::CalcDistanceCost(solution, data.distance_matrix, data.depot) << std::endl;
     std::cout << "Total route min-sum distance: " << covid19::CalcDistanceCumCost(solution, data.distance_matrix, data.depot) << std::endl;
 
     covid19::WriteResults(solution, "solution.txt");

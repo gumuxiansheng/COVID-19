@@ -5,6 +5,7 @@
 #include "vns.h"
 #include "../utils/distance_util.h"
 #include "../utils/requirements_util.h"
+#include "../utils/vector_help.h"
 #include <algorithm>
 
 namespace covid19
@@ -77,24 +78,30 @@ std::vector<int> TwoHOptSwap(const std::vector<int>& nodes_permutation, int swap
 
 }
 
-int64_t CalcCost(const std::string type, const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances, int depot_index)
+int64_t CalcCost(const std::string type, const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances, const std::vector<int>& depot_indexes)
 {
     if (type == "distance")
     {
-        return covid19::CalcDistanceCost(nodes_permutation, distances);
+        return covid19::CalcDistanceCost(nodes_permutation, distances, depot_indexes);
     } else if (type == "cumdistance")
     {
-        return covid19::CalcDistanceCumCost(nodes_permutation, distances, depot_index);
+        return covid19::CalcDistanceCumCost(nodes_permutation, distances, depot_indexes);
     }
 
-    return covid19::CalcDistanceCost(nodes_permutation, distances);
+    return covid19::CalcDistanceCost(nodes_permutation, distances, depot_indexes);
 }
 
-std::vector<int> Vns (const std::string type, const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, int depot_index)
+int64_t CalcCost(const std::string type, const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances, int depot_index)
+{
+    std::vector<int> depot_indexes{depot_index};
+    return covid19::CalcCost(type, nodes_permutation, distances, depot_indexes);
+}
+
+std::vector<int> Vns (const std::string type, const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, std::vector<int>& depot_indexes)
 {
     const int TRAVEL_SIZE = nodes_permutation.size();
     std::vector<int> current_permutation = nodes_permutation;
-    int64_t current_cost = CalcCost(type, nodes_permutation, distances, depot_index);
+    int64_t current_cost = CalcCost(type, nodes_permutation, distances, depot_indexes);
 
     int count = 0;
     int max_no_improve = 10;
@@ -113,7 +120,7 @@ std::vector<int> Vns (const std::string type, const std::vector<int>& nodes_perm
                 {
                     continue;
                 }
-                int64_t neighbour_cost = CalcCost(type, neighbour, distances, depot_index);
+                int64_t neighbour_cost = CalcCost(type, neighbour, distances, depot_indexes);
 
                 if (current_cost > neighbour_cost)
                 {
@@ -142,7 +149,7 @@ std::vector<int> Vns (const std::string type, const std::vector<int>& nodes_perm
                 {
                     continue;
                 }
-                int64_t neighbour_cost = CalcCost(type, neighbour, distances, depot_index);
+                int64_t neighbour_cost = CalcCost(type, neighbour, distances, depot_indexes);
 
                 if (current_cost > neighbour_cost)
                 {
@@ -181,7 +188,7 @@ std::vector<int> Vns (const std::string type, const std::vector<int>& nodes_perm
                 {
                     continue;
                 }
-                int64_t neighbour_cost = CalcCost(type, neighbour, distances, depot_index);
+                int64_t neighbour_cost = CalcCost(type, neighbour, distances, depot_indexes);
 
                 if (current_cost > neighbour_cost)
                 {
@@ -204,22 +211,39 @@ int DecentCmp(int a,int b)
     return b<a;
 }
 
-std::vector<int> Vns (const std::string type, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, int num_vehicles, int depot_index)
+std::vector<int> Vns (const std::string type, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, std::vector<int> num_vehicles, std::vector<int>& depot_indexes)
 {
     const int NODE_SIZE = nodes_requirements.size();
+    const int DEPOT_SIZE = depot_indexes.size();
     std::vector<int> initial_permutation;
-    initial_permutation.push_back(depot_index);
+    int current_depot_i = 0;
 
     std::vector<int64_t> sorted_requirements = nodes_requirements;
     std::sort(sorted_requirements.begin(), sorted_requirements.end(), DecentCmp); // sort requirements from large to small
 
     int64_t cum_requirements  = 0;
 
-    std::vector<int> remain_nodes; // exclude the depot
-    for (int j = 1; j < NODE_SIZE; ++j) {
+    std::vector<int> remain_nodes;
+    for (int j = 0; j < NODE_SIZE; ++j) 
+    {
+        // exclude the depot
+        if (IsIn(j, depot_indexes)){
+            continue;
+        }
         remain_nodes.push_back(j);
     }
-    while (!remain_nodes.empty()) {
+    while (!remain_nodes.empty()) 
+    {
+        int depot_iter_count = 0;
+        while (num_vehicles[current_depot_i] <= 0 && depot_iter_count < DEPOT_SIZE)
+        {
+            current_depot_i = (current_depot_i + 1) % DEPOT_SIZE;
+            depot_iter_count++;
+        }
+        depot_iter_count = 0;
+        
+        initial_permutation.push_back(depot_indexes[current_depot_i]);
+        num_vehicles[current_depot_i]--;
         std::vector<int> used_sort_index{};
         for (int i = 0; i < sorted_requirements.size(); ++i) { // start from the max requirement
             if (cum_requirements <= capacity - sorted_requirements[i]){
@@ -244,9 +268,16 @@ std::vector<int> Vns (const std::string type, const std::vector<std::vector<int6
 
         used_sort_index.clear();
 
-        initial_permutation.push_back(depot_index);
+        initial_permutation.push_back(depot_indexes[current_depot_i++]);
         cum_requirements = 0;
     }
-    return Vns(type, initial_permutation, distances, nodes_requirements, capacity, depot_index);
+    return Vns(type, initial_permutation, distances, nodes_requirements, capacity, depot_indexes);
+}
+
+std::vector<int> Vns (const std::string type, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, int num_vehicles, int depot_index)
+{
+    std::vector<int> num_vehicles_list{num_vehicles};
+    std::vector<int> depot_indexes{depot_index};
+    return Vns(type, distances, nodes_requirements, capacity, num_vehicles_list, depot_indexes);
 }
 }

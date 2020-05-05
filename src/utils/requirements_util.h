@@ -6,6 +6,17 @@
 
 namespace covid19
 {
+
+/**
+ * Check the multi-depots route to see if it matches the requirements constraint.
+ * @param nodes_permutation the route permutation
+ * @param nodes_requirements requirements of each node
+ * @param capacity each route's requirements should not exceed capacity.
+ * @param depot_indexes
+ * @return if the route is valid, return true, else false
+ */
+bool CheckMultiDepotRequirements(const std::vector<int>& nodes_permutation, const std::vector<int64_t>& nodes_requirements, int64_t capacity, const std::vector<int>& depot_indexes);
+
 /**
  * Check the route to see if it matches the requirements constraint.
  * @param nodes_permutation the route permutation
