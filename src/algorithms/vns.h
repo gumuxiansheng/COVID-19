@@ -66,6 +66,7 @@ std::vector<int> TwoHOptSwap(const std::vector<int>& nodes_permutation, int swap
 
 /**
  * VNS(Variable Neighborhood Search)
+ * @param type, type of the cost function, "distance" or "cumdistance"
  * @param distances
  * @param nodes_requirements
  * @param capacity
@@ -73,7 +74,7 @@ std::vector<int> TwoHOptSwap(const std::vector<int>& nodes_permutation, int swap
  * @param depot_index
  * @return
  */
-std::vector<int> Vns (const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, int num_vehicles, int depot_index);
+std::vector<int> Vns (const std::string type, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, int num_vehicles, int depot_index);
 
 }
 

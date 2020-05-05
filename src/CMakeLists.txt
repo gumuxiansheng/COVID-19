@@ -7,7 +7,8 @@ project(covid19_or)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/..)
 
 foreach(EXECUTABLE
-  cvrp_raw)
+  cvrp_raw
+  ccvrp_raw)
   add_executable(${EXECUTABLE} ${EXECUTABLE}.cc utils/file_util.cc utils/distance_util.cc utils/requirements_util.cc algorithms/vns.cc algorithms/vns.h)
   target_include_directories(${EXECUTABLE} PUBLIC ${PARENT_SOURCE_DIR})
   target_compile_features(${EXECUTABLE} PRIVATE cxx_std_11)

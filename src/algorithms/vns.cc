@@ -77,11 +77,24 @@ std::vector<int> TwoHOptSwap(const std::vector<int>& nodes_permutation, int swap
 
 }
 
-std::vector<int> Vns (const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity)
+int64_t CalcCost(const std::string type, const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances, int depot_index)
+{
+    if (type == "distance")
+    {
+        return covid19::CalcDistanceCost(nodes_permutation, distances);
+    } else if (type == "cumdistance")
+    {
+        return covid19::CalcDistanceCumCost(nodes_permutation, distances, depot_index);
+    }
+
+    return covid19::CalcDistanceCost(nodes_permutation, distances);
+}
+
+std::vector<int> Vns (const std::string type, const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, int depot_index)
 {
     const int TRAVEL_SIZE = nodes_permutation.size();
     std::vector<int> current_permutation = nodes_permutation;
-    int64_t current_cost = covid19::CalcDistanceCost(nodes_permutation, distances);
+    int64_t current_cost = CalcCost(type, nodes_permutation, distances, depot_index);
 
     int count = 0;
     int max_no_improve = 10;
@@ -100,7 +113,7 @@ std::vector<int> Vns (const std::vector<int>& nodes_permutation, const std::vect
                 {
                     continue;
                 }
-                int64_t neighbour_cost = covid19::CalcDistanceCost(neighbour, distances);
+                int64_t neighbour_cost = CalcCost(type, neighbour, distances, depot_index);
 
                 if (current_cost > neighbour_cost)
                 {
@@ -129,7 +142,7 @@ std::vector<int> Vns (const std::vector<int>& nodes_permutation, const std::vect
                 {
                     continue;
                 }
-                int64_t neighbour_cost = covid19::CalcDistanceCost(neighbour, distances);
+                int64_t neighbour_cost = CalcCost(type, neighbour, distances, depot_index);
 
                 if (current_cost > neighbour_cost)
                 {
@@ -168,7 +181,7 @@ std::vector<int> Vns (const std::vector<int>& nodes_permutation, const std::vect
                 {
                     continue;
                 }
-                int64_t neighbour_cost = covid19::CalcDistanceCost(neighbour, distances);
+                int64_t neighbour_cost = CalcCost(type, neighbour, distances, depot_index);
 
                 if (current_cost > neighbour_cost)
                 {
@@ -191,7 +204,7 @@ int DecentCmp(int a,int b)
     return b<a;
 }
 
-std::vector<int> Vns (const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, int num_vehicles, int depot_index)
+std::vector<int> Vns (const std::string type, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, int num_vehicles, int depot_index)
 {
     const int NODE_SIZE = nodes_requirements.size();
     std::vector<int> initial_permutation;
@@ -234,6 +247,6 @@ std::vector<int> Vns (const std::vector<std::vector<int64_t>>& distances, const 
         initial_permutation.push_back(depot_index);
         cum_requirements = 0;
     }
-    return Vns(initial_permutation, distances, nodes_requirements, capacity);
+    return Vns(type, initial_permutation, distances, nodes_requirements, capacity, depot_index);
 }
 }

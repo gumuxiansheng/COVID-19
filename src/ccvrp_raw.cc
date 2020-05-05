@@ -1,5 +1,5 @@
 //
-// Created by MikeZhu on 2020/4/14.
+// Created by MikeZhu on 2020/5/5.
 //
 
 #include <numeric>
@@ -27,9 +27,8 @@ DataModel initDataModel(){
     std::cin >> file_url;
 
     covid19::ChristofidesDataModel christofides_data = covid19::ReadChristofides(file_url);
-    std::vector<std::vector<int64_t>> distances = covid19::CalcDistances(christofides_data.nodes);
 
-    data.distance_matrix = std::move(distances);
+    data.distance_matrix = std::move(covid19::CalcDistances(christofides_data.nodes));
     data.demands = std::move(covid19::GetChristofidesRequirements(christofides_data.nodes));
     int64_t sum_demands = accumulate(data.demands.begin(), data.demands.end(), 0);
     data.num_vehicles = sum_demands/christofides_data.capacity + 1;
@@ -80,7 +79,7 @@ void PrintSolution(const DataModel &data, const std::vector<int> &solution)
 void VrpCapacity()
 {
     DataModel data = initDataModel();
-    std::vector<int> solution = covid19::Vns("distance", data.distance_matrix, data.demands, data.vehicle_capacity, data.num_vehicles, data.depot);
+    std::vector<int> solution = covid19::Vns("cumdistance", data.distance_matrix, data.demands, data.vehicle_capacity, data.num_vehicles, data.depot);
 
     PrintSolution(data, solution);
 }

@@ -12,7 +12,7 @@ void run()
   strcat(current_folder, "/");
 
   std::cout << "Hello, here you can choose what to run:" << std::endl;
-  std::cout << "[vrp|cvrp|cvrp_raw]" << std::endl;
+  std::cout << "[vrp|cvrp|cvrp_raw|ccvrp_raw]" << std::endl;
   char program[10];
   std::cin >> program;
 
