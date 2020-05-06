@@ -7,6 +7,7 @@
 #include "utils/file_util.h"
 #include "utils/distance_util.h"
 #include "utils/requirements_util.h"
+#include "utils/vector_help.h"
 
 namespace covid19
 {
@@ -19,7 +20,8 @@ struct DataModel
     std::vector<int> depot{0};
 };
 
-DataModel initDataModel(){
+DataModel initDataModel()
+{
     DataModel data;
 
     std::string file_url;
@@ -45,19 +47,18 @@ void PrintSolution(const DataModel &data, const std::vector<int> &solution)
         std::cout << index << " -> ";
     }
     std::cout << std::endl;
+
     for (int i = 0; i < solution.size(); ++i) {
         int index = solution[i];
         sub_solution.push_back(index);
-        if (index == 0) {
+        if (IsIn(index, data.depot)) {
             if (sub_solution.size() != 1){
                 std::cout << index << " Load(" << data.demands[index] << ")" << std::endl;
                 std::cout << "Travel " << num_travel << "'s distance: " << covid19::CalcDistanceCost(sub_solution, data.distance_matrix, data.depot) << std::endl;
                 std::cout << "Travel " << num_travel << "'s min-sum distance: " << covid19::CalcDistanceCumCost(sub_solution, data.distance_matrix, data.depot) << std::endl;
                 std::cout << "Travel " << num_travel << "'s load: " << covid19::CalcRequirements(sub_solution, data.demands) << std::endl;
                 sub_solution.clear();
-                sub_solution.push_back(index);
-            }
-            if (i != solution.size() - 1){
+            } else if (i != solution.size() - 1){
                 std::cout << "Start travel " << ++num_travel << std::endl;
                 std::cout << index << " Load(" << data.demands[index] << ")" << " -> ";
             }

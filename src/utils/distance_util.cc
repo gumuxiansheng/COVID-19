@@ -86,7 +86,7 @@ int64_t CalcDistanceCost(const std::vector<int> &nodes_permutation, const std::v
     {
         int start_node_index = nodes_permutation[i];
         int end_node_index = nodes_permutation[i + 1];
-        if (IsIn(start_node_index, depot_indexes) || IsIn(end_node_index, depot_indexes))
+        if (IsIn(start_node_index, depot_indexes) && IsIn(end_node_index, depot_indexes))
         {
             continue;
         }

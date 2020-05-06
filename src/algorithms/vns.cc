@@ -116,7 +116,7 @@ std::vector<int> Vns (const std::string type, const std::vector<int>& nodes_perm
             {
                 std::vector<int> neighbour = TwoOptSwap(current_permutation, i, k);
 
-                if (!covid19::CheckRequirements(neighbour, nodes_requirements, capacity))
+                if (!covid19::CheckMultiDepotRequirements(neighbour, nodes_requirements, capacity, depot_indexes))
                 {
                     continue;
                 }
@@ -145,7 +145,7 @@ std::vector<int> Vns (const std::string type, const std::vector<int>& nodes_perm
             {
                 std::vector<int> neighbour = TwoSwap(current_permutation, i, k);
 
-                if (!covid19::CheckRequirements(neighbour, nodes_requirements, capacity))
+                if (!covid19::CheckMultiDepotRequirements(neighbour, nodes_requirements, capacity, depot_indexes))
                 {
                     continue;
                 }
@@ -184,7 +184,7 @@ std::vector<int> Vns (const std::string type, const std::vector<int>& nodes_perm
                 }
                 neighbour.push_back(nodes_permutation[nodes_permutation.size() - 1]);
 
-                if (!covid19::CheckRequirements(neighbour, nodes_requirements, capacity))
+                if (!covid19::CheckMultiDepotRequirements(neighbour, nodes_requirements, capacity, depot_indexes))
                 {
                     continue;
                 }
@@ -263,14 +263,22 @@ std::vector<int> Vns (const std::string type, const std::vector<std::vector<int6
         }
         for (int k = 0; k < used_sort_index.size(); ++k) {
             int idx = used_sort_index[k] - k;
+
             sorted_requirements.erase(std::begin(sorted_requirements) + idx);
         }
 
         used_sort_index.clear();
 
-        initial_permutation.push_back(depot_indexes[current_depot_i++]);
+        initial_permutation.push_back(depot_indexes[current_depot_i]);
+        current_depot_i = (current_depot_i + 1) % DEPOT_SIZE;
         cum_requirements = 0;
     }
+    std::cout << "initial solution: " << std::endl;
+    for (int i = 0; i < initial_permutation.size(); ++i) {
+        int index = initial_permutation[i];
+        std::cout << index << " -> ";
+    }
+    std::cout << std::endl;
     return Vns(type, initial_permutation, distances, nodes_requirements, capacity, depot_indexes);
 }
 
