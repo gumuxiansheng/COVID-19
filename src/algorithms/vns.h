@@ -74,7 +74,7 @@ std::vector<int> TwoHOptSwap(const std::vector<int>& nodes_permutation, int swap
  * @param depot_indexes
  * @return
  */
-std::vector<int> Vns (const std::string type, const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, std::vector<int>& depot_indexes);
+std::vector<int> Vns (const std::string type, const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, const std::vector<int>& depot_indexes);
 
 /**
  * VNS(Variable Neighborhood Search) for multi depots
@@ -86,7 +86,7 @@ std::vector<int> Vns (const std::string type, const std::vector<int>& nodes_perm
  * @param depot_indexes
  * @return
  */
-std::vector<int> Vns (const std::string type, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, std::vector<int> num_vehicles, std::vector<int>& depot_indexes);
+std::vector<int> Vns (const std::string type, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, const std::vector<int>& num_vehicles, const std::vector<int>& depot_indexes);
 
 /**
  * VNS(Variable Neighborhood Search) for single depot

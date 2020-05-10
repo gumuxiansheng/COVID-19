@@ -79,7 +79,9 @@ void PrintSolution(const DataModel &data, const std::vector<int> &solution)
 void VrpCapacity()
 {
     DataModel data = initDataModel();
-    std::vector<int> solution = covid19::Vns("cumdistance", data.distance_matrix, data.demands, data.vehicle_capacity, data.num_vehicles, data.depot);
+    // Use distance type to calc the inital solution
+    std::vector<int> init_solution = Vns ("distance", data.distance_matrix, data.demands, data.vehicle_capacity, data.num_vehicles, data.depot);
+    std::vector<int> solution = covid19::Vns("cumdistance", init_solution, data.distance_matrix, data.demands, data.vehicle_capacity, data.depot);
 
     PrintSolution(data, solution);
 }
