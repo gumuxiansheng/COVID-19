@@ -23,24 +23,24 @@ public:
 };
 
 std::vector<std::vector<int64_t>> CalcDistances(
-    const std::vector<std::vector<int64_t>> &locations)
+    const std::vector<std::vector<int64_t>> &locations, int loc_x_i, int loc_y_i)
 {
     auto *dis_algorithm = new DistanceManhattan;
-    return CalcDistances(locations, dis_algorithm);
+    return CalcDistances(locations, dis_algorithm, loc_x_i, loc_y_i);
 }
 
 std::vector<std::vector<int64_t>> CalcDistances(
-    const std::vector<std::vector<int64_t>> &locations, DistanceType disttype)
+    const std::vector<std::vector<int64_t>> &locations, DistanceType disttype, int loc_x_i, int loc_y_i)
 {
     if (disttype == DistanceType::euclidean)
     {
         auto *dis_algorithm = new DistanceEuclidean;
-        return CalcDistances(locations, dis_algorithm);
+        return CalcDistances(locations, dis_algorithm, loc_x_i, loc_y_i);
     }
     else if (disttype == DistanceType::manhattan)
     {
         DistanceAlgorithm *dis_algorithm = new DistanceManhattan;
-        return CalcDistances(locations, dis_algorithm);
+        return CalcDistances(locations, dis_algorithm, loc_x_i, loc_y_i);
     }
     else
     {
@@ -48,12 +48,12 @@ std::vector<std::vector<int64_t>> CalcDistances(
     }
 
     DistanceAlgorithm *dis_algorithm = new DistanceManhattan;
-    return CalcDistances(locations, dis_algorithm);
+    return CalcDistances(locations, dis_algorithm, loc_x_i, loc_y_i);
 }
 
 std::vector<std::vector<int64_t>> CalcDistances(
     const std::vector<std::vector<int64_t>> &locations,
-    DistanceAlgorithm *algorithm)
+    DistanceAlgorithm *algorithm, int loc_x_i, int loc_y_i)
 {
     int N = locations.size();
     std::vector<std::vector<int64_t>> distances(N, std::vector<int64_t>(N));
@@ -62,7 +62,7 @@ std::vector<std::vector<int64_t>> CalcDistances(
         distances[i][i] = 0;
         for (size_t j = i + 1; j < N; j++)
         {
-            distances[i][j] = algorithm->CalcDistance(locations[i][0], locations[i][1], locations[j][0], locations[j][1]);
+            distances[i][j] = algorithm->CalcDistance(locations[i][loc_x_i], locations[i][loc_y_i], locations[j][loc_x_i], locations[j][loc_y_i]);
             distances[j][i] = distances[i][j];
         }
     }

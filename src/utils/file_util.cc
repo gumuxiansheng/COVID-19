@@ -85,7 +85,7 @@ ChristofidesDataModel ReadChristofides(const std::string &file_name)
                 std::string loc_t_s;
                 for (size_t i = 0; i < line_str.size() + 1; i++)
                 {
-                    if (i == line_str.size() || line_str[i] == ' ')
+                    if (i == line_str.size() || (line_str[i] == ' ' && i != 0))
                     {
                         loc_vec.push_back(std::stoi(loc_t_s));
                         loc_t_s = "";

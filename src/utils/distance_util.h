@@ -21,14 +21,14 @@ enum class DistanceType
 };
 
 std::vector<std::vector<int64_t>> CalcDistances(
-    const std::vector<std::vector<int64_t>>& locations);
+    const std::vector<std::vector<int64_t>>& locations, int loc_x_i = 0, int loc_y_i = 1);
 
 std::vector<std::vector<int64_t>> CalcDistances(
-    const std::vector<std::vector<int64_t>>& locations, DistanceType disttype);
+    const std::vector<std::vector<int64_t>>& locations, DistanceType disttype, int loc_x_i = 0, int loc_y_i = 1);
 
 std::vector<std::vector<int64_t>> CalcDistances(
     const std::vector<std::vector<int64_t>>& locations,
-    DistanceAlgorithm *algorithm);
+    DistanceAlgorithm *algorithm, int loc_x_i = 0, int loc_y_i = 1);
 
 int64_t CalcDistanceCost(const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances, const std::vector<int> &depot_indexes);
 
