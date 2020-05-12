@@ -102,4 +102,4 @@ std::vector<int> Vns (const std::string type, const std::vector<std::vector<int6
 
 }
 
-#endif //HELLO_VNS_H_
+#endif //COVID19_VNS_H_

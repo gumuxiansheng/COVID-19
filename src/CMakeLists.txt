@@ -10,7 +10,7 @@ foreach(EXECUTABLE
   cvrp_raw
   ccvrp_raw
   ccvrp_multi_depot_raw)
-  add_executable(${EXECUTABLE} ${EXECUTABLE}.cc utils/file_util.cc utils/distance_util.cc utils/requirements_util.cc utils/vector_help.cc algorithms/vns.cc algorithms/vns.h)
+  add_executable(${EXECUTABLE} ${EXECUTABLE}.cc utils/file_util.cc utils/distance_util.cc utils/requirements_util.cc utils/vector_help.cc algorithms/vns.cc algorithms/vns.h algorithms/init_solution.cc algorithms/init_solution.h)
   target_include_directories(${EXECUTABLE} PUBLIC ${PARENT_SOURCE_DIR})
   target_compile_features(${EXECUTABLE} PRIVATE cxx_std_11)
 endforeach()
