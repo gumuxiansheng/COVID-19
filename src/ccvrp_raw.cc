@@ -4,6 +4,7 @@
 
 #include <numeric>
 #include "algorithms/vns.h"
+#include "algorithms/cost.h"
 #include "utils/file_util.h"
 #include "utils/distance_util.h"
 #include "utils/requirements_util.h"

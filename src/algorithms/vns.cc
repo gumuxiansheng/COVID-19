@@ -7,6 +7,7 @@
 #include "../utils/requirements_util.h"
 #include "../utils/vector_help.h"
 #include "init_solution.h"
+#include "cost.h"
 #include <algorithm>
 
 namespace covid19
@@ -77,25 +78,6 @@ std::vector<int> TwoHOptSwap(const std::vector<int>& nodes_permutation, int swap
 
     return v;
 
-}
-
-int64_t CalcCost(const std::string type, const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances, const std::vector<int>& depot_indexes)
-{
-    if (type == "distance")
-    {
-        return covid19::CalcDistanceCost(nodes_permutation, distances, depot_indexes);
-    } else if (type == "cumdistance")
-    {
-        return covid19::CalcDistanceCumCost(nodes_permutation, distances, depot_indexes);
-    }
-
-    return covid19::CalcDistanceCost(nodes_permutation, distances, depot_indexes);
-}
-
-int64_t CalcCost(const std::string type, const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances, int depot_index)
-{
-    std::vector<int> depot_indexes{depot_index};
-    return covid19::CalcCost(type, nodes_permutation, distances, depot_indexes);
 }
 
 std::vector<int> Vns (const std::string type, const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, const std::vector<int>& depot_indexes)

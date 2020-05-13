@@ -4,6 +4,8 @@
 
 #include <numeric>
 #include "algorithms/vns.h"
+#include "algorithms/cost.h"
+#include "algorithms/init_solution.h"
 #include "utils/file_util.h"
 #include "utils/distance_util.h"
 #include "utils/requirements_util.h"
@@ -16,7 +18,7 @@ struct DataModel
     std::vector<std::vector<int64_t>> distance_matrix{};
     std::vector<int64_t> demands{};
     int64_t vehicle_capacity{1};
-    std::vector<int> num_vehicles{1};
+    std::vector<int> num_vehicles{5};
     std::vector<int> depot{0};
 };
 
@@ -80,7 +82,8 @@ void VrpCapacity()
 {
     DataModel data = initDataModel();
     // Use distance type to calc the inital solution
-    std::vector<int> init_solution = Vns ("distance", data.distance_matrix, data.demands, data.vehicle_capacity, data.num_vehicles, data.depot);
+    // std::vector<int> init_solution = Vns ("distance", data.distance_matrix, data.demands, data.vehicle_capacity, data.num_vehicles, data.depot);
+    std::vector<int> init_solution = RegretInsersion ("cumdistance", data.distance_matrix, data.demands, data.vehicle_capacity, data.num_vehicles, data.depot);
     std::vector<int> solution = covid19::Vns("cumdistance", init_solution, data.distance_matrix, data.demands, data.vehicle_capacity, data.depot);
 
     PrintSolution(data, solution);
