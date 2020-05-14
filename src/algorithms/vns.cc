@@ -9,6 +9,7 @@
 #include "init_solution.h"
 #include "cost.h"
 #include <algorithm>
+#include <random>
 
 namespace covid19
 {
@@ -80,6 +81,27 @@ std::vector<int> TwoHOptSwap(const std::vector<int>& nodes_permutation, int swap
 
 }
 
+std::vector<int> RelocationMove(const std::vector<int>& nodes_permutation, int item_index, int insert_index)
+{
+    const int TRAVEL_SIZE = nodes_permutation.size();
+    std::vector<int> v;
+
+    for (size_t i = 0; i < TRAVEL_SIZE; i++)
+    {
+        if (i == item_index)
+        {
+            continue;
+        } else if (i == insert_index)
+        {
+            v.push_back(nodes_permutation[item_index]);
+        }
+        v.push_back(nodes_permutation[i]);
+    }
+    
+
+    return v;
+}
+
 std::vector<int> Vns (const std::string type, const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, const std::vector<int>& depot_indexes)
 {
     const int TRAVEL_SIZE = nodes_permutation.size();
@@ -87,7 +109,10 @@ std::vector<int> Vns (const std::string type, const std::vector<int>& nodes_perm
     int64_t current_cost = CalcCost(type, nodes_permutation, distances, depot_indexes);
 
     int count = 0;
-    int max_no_improve = 10;
+    std::random_device rd;
+    std::default_random_engine e{rd()};
+    std::uniform_int_distribution<unsigned> u(2, 11);
+    int max_no_improve = u(e);
 
     std::cout << "STAGE 1: " << std::endl;
     do
@@ -148,17 +173,54 @@ std::vector<int> Vns (const std::string type, const std::vector<int>& nodes_perm
     } while (count <= max_no_improve);
 
     std::cout << "STAGE 3: " << std::endl;
+    do
+    {
+        count++;
+        for (int i = 1; i < TRAVEL_SIZE - 2; i++)
+        {
+            for (int k = 1; k < TRAVEL_SIZE - 1; k++)
+            {
+                if (k == i)
+                {
+                    continue;
+                }
+                std::vector<int> neighbour = RelocationMove(current_permutation, i, k);
 
-    std::vector<int> inline_permutation = nodes_permutation;
-    inline_permutation.erase(std::begin(inline_permutation));
+                if (!covid19::CheckMultiDepotRequirements(neighbour, nodes_requirements, capacity, depot_indexes))
+                {
+                    continue;
+                }
+                int64_t neighbour_cost = CalcCost(type, neighbour, distances, depot_indexes);
+
+                if (current_cost > neighbour_cost)
+                {
+                    current_permutation = neighbour;
+                    current_cost = neighbour_cost;
+                    std::cout << "current_cost: " << current_cost << std::endl;
+                    count = 0;
+                }
+
+            }
+        }
+
+    } while (count <= max_no_improve);
+
+    std::cout << "STAGE 4: " << std::endl;
+
+    std::vector<int> inline_permutation{nodes_permutation};
+    inline_permutation.erase(inline_permutation.begin());
     inline_permutation.pop_back();
     do
     {
         count++;
         for (int i = 1; i < TRAVEL_SIZE - 3; i++)
         {
-            for (int k = i + 1; k < TRAVEL_SIZE - 2; k++)
+            for (int k = 1; k < TRAVEL_SIZE - 2; k++)
             {
+                if (k == i)
+                {
+                    continue;
+                }
                 inline_permutation = TwoHOptSwap(inline_permutation, i, k);
                 std::vector<int> neighbour;
                 neighbour.push_back(nodes_permutation[0]);

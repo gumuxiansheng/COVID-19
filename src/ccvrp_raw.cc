@@ -30,7 +30,7 @@ DataModel initDataModel(){
     covid19::ChristofidesDataModel christofides_data = covid19::ReadChristofides(file_url);
 
     data.distance_matrix = std::move(covid19::CalcDistances(christofides_data.nodes));
-    data.demands = std::move(covid19::GetChristofidesRequirements(christofides_data.nodes));
+    data.demands = std::move(covid19::GetNodesRequirements(christofides_data.nodes));
     int64_t sum_demands = accumulate(data.demands.begin(), data.demands.end(), 0);
     data.num_vehicles = sum_demands/christofides_data.capacity + 1;
     data.vehicle_capacity = christofides_data.capacity;

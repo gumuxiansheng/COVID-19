@@ -1,7 +1,3 @@
-if (NOT BUILD_CXX)
-    return()
-endif()
-
 project(covid19_or)
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/..)

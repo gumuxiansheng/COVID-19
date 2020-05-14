@@ -128,15 +128,15 @@ std::vector<int> RegretInsersion (const std::string type, const std::vector<std:
 
     }
 
-    std::cout << "Step 0 current_routes" << std::endl;
-    for (auto depot_route : current_routes)
-    {
-        for (auto depot : depot_route)
-        {
-            std::cout << depot << "    ";
-        }
-        std::cout << std::endl;
-    }
+    // std::cout << "Step 0 current_routes" << std::endl;
+    // for (auto depot_route : current_routes)
+    // {
+    //     for (auto depot : depot_route)
+    //     {
+    //         std::cout << depot << "    ";
+    //     }
+    //     std::cout << std::endl;
+    // }
     
     // STEP 1: intial routes with the nearest customer to the depot
     for (auto &depot_route : current_routes)
@@ -159,27 +159,26 @@ std::vector<int> RegretInsersion (const std::string type, const std::vector<std:
 
     }
 
-    std::cout << "Step 1 current_routes" << std::endl;
-    for (auto depot_route : current_routes)
-    {
-        for (auto depot : depot_route)
-        {
-            std::cout << depot << "    ";
-        }
-        std::cout << std::endl;
-    }
+    // std::cout << "Step 1 current_routes" << std::endl;
+    // for (auto depot_route : current_routes)
+    // {
+    //     for (auto depot : depot_route)
+    //     {
+    //         std::cout << depot << "    ";
+    //     }
+    //     std::cout << std::endl;
+    // }
 
     RegretInsersionRecur(distances, nodes_requirements, capacity, num_vehicles, depot_indexes, current_routes, remain_customers);
 
-    std::cout << "Step Last current_routes x" << std::endl;
-    for (auto depot_route : current_routes)
-    {
-        for (auto depot : depot_route)
-        {
-            std::cout << depot << "    ";
-        }
-        std::cout << std::endl;
-    }
+    // for (auto depot_route : current_routes)
+    // {
+    //     for (auto depot : depot_route)
+    //     {
+    //         std::cout << depot << "    ";
+    //     }
+    //     std::cout << std::endl;
+    // }
 
     for (auto &route : current_routes)
     {
@@ -201,17 +200,16 @@ std::vector<int> RegretInsersion (const std::string type, const std::vector<std:
 
 void RegretInsersionRecur (const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, const std::vector<int>& num_vehicles, const std::vector<int>& depot_indexes, std::vector<std::vector<int>> &current_routes, std::vector<int> &remain_customers)
 {
-    std::cout << "current_routes" << std::endl;
-    for (auto depot_route : current_routes)
-    {
-        for (auto depot : depot_route)
-        {
-            std::cout << depot << "    ";
-        }
-        std::cout << std::endl;
-    }
+    // std::cout << "current_routes" << std::endl;
+    // for (auto depot_route : current_routes)
+    // {
+    //     for (auto depot : depot_route)
+    //     {
+    //         std::cout << depot << "    ";
+    //     }
+    //     std::cout << std::endl;
+    // }
 
-    std::cout << "remain_customers: " << remain_customers.size();
     if (remain_customers.empty())
     {
         return;
@@ -261,7 +259,7 @@ void RegretInsersionRecur (const std::vector<std::vector<int64_t>>& distances, c
     // +--+
     // |31| -- customer 2's min regret
     // +--+
-    // |18| -- customer 3's min regret, this is the least regret, so customer 3 should be chosen to add to one route
+    // |48| -- customer 3's min regret, this is the most regret, so customer 3 should be chosen to add to one route
     // +--+
     // |38| -- customer 4's min regret
     // +--+
@@ -304,25 +302,23 @@ void RegretInsersionRecur (const std::vector<std::vector<int64_t>>& distances, c
         min_positions.push_back(min_pos);
     }
 
-    // STEP 4: choose least regret
-    int min_regret_pointer = 0;
-    int64_t min_regret_value = regret_value[min_regret_pointer];
+    // STEP 4: choose most regret
+    int max_regret_pointer = 0;
+    int64_t max_regret_value = regret_value[max_regret_pointer];
     for (size_t i = 1; i < regret_value.size(); i++)
     {
-        if (regret_value[i] < min_regret_value)
+        if (regret_value[i] > max_regret_value)
         {
-            min_regret_value = regret_value[i];
-            min_regret_pointer = i;
+            max_regret_value = regret_value[i];
+            max_regret_pointer = i;
         }
     }
 
-    int min_regret_customer = remain_customers[min_regret_pointer];
-    std::vector<int> min_regret_position = min_positions[min_regret_pointer];
+    int max_regret_customer = remain_customers[max_regret_pointer];
+    std::vector<int> max_regret_position = min_positions[max_regret_pointer];
 
-    std::cout << "min_regret_position:" << min_regret_position[0] << ", " << min_regret_position[1];
-
-    current_routes[min_regret_position[0]].insert(current_routes[min_regret_position[0]].begin() + min_regret_position[1], min_regret_customer);
-    remain_customers.erase(remain_customers.begin() + min_regret_pointer);
+    current_routes[max_regret_position[0]].insert(current_routes[max_regret_position[0]].begin() + max_regret_position[1], max_regret_customer);
+    remain_customers.erase(remain_customers.begin() + max_regret_pointer);
 
     RegretInsersionRecur(distances, nodes_requirements, capacity, num_vehicles, depot_indexes, current_routes, remain_customers);
 }

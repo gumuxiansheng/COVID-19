@@ -7,4 +7,3 @@ add_executable(${PROJECT_NAME} src/hello.cc)
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_11)
 
 add_subdirectory(src)
-
