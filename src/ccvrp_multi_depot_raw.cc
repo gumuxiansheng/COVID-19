@@ -12,6 +12,7 @@
 #include "utils/vector_help.h"
 #include <random>
 #include <ctime>
+#include <algorithm>
 
 namespace covid19
 {
@@ -66,7 +67,7 @@ DataModel initPRDataModel(std::string file_url)
         unsigned num = u(e);
         vehicles_splits.push_back(num);
     }
-    sort(vehicles_splits.begin(), vehicles_splits.end());
+    std::sort(vehicles_splits.begin(), vehicles_splits.end());
 
     std::vector<int> vehicles{};
     std::cout << "vehicles: ";

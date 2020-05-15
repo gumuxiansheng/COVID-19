@@ -9,7 +9,7 @@ void run()
   
   char current_folder[100];
   getcwd(current_folder, sizeof(current_folder));
-  strcat(current_folder, "/");
+//   strcat(current_folder, "/");
 
   std::cout << "Hello, here you can choose what to run:" << std::endl;
   std::cout << "[vrp|cvrp|cvrp_raw|ccvrp_raw]" << std::endl;
@@ -17,8 +17,8 @@ void run()
   std::cin >> program;
 
   char pro_r[110];
-  strcpy(pro_r, current_folder);
-  strcat(pro_r, program);
+//   strcpy(pro_r, current_folder);
+//   strcat(pro_r, program);
   system(pro_r);
 }
 } // namespace covid19
