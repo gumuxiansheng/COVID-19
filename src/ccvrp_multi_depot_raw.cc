@@ -55,7 +55,7 @@ DataModel initPRDataModel(std::string file_url)
     data.vehicle_capacity = pr_data.capacity;
     data.depot = pr_data.depot_indexes;
 
-    int total_vehicles = 11;
+    int total_vehicles = 35;
     std::random_device rd;
     std::default_random_engine e{rd()};
     std::uniform_int_distribution<unsigned> u(0, total_vehicles);
@@ -64,7 +64,6 @@ DataModel initPRDataModel(std::string file_url)
     for (size_t i = 0; i < data.depot.size() - 1; i++)
     {
         unsigned num = u(e);
-        std::cout << num << "  ";
         vehicles_splits.push_back(num);
     }
     sort(vehicles_splits.begin(), vehicles_splits.end());
@@ -87,7 +86,7 @@ DataModel initPRDataModel(std::string file_url)
     }
     data.num_vehicles = vehicles;
 
-    std::cout << "initPRDataModel succeed" << std::endl;
+    std::cout << std::endl << "initPRDataModel succeed" << std::endl;
 
     return data;
 }
@@ -136,7 +135,7 @@ void VrpCapacity()
     std::string file_url;
     std::cout << "please enter the PR file url:" << std::endl;
     std::cin >> file_url;
-    for (size_t i = 0; i < 2; i++)
+    for (size_t i = 0; i < 1; i++)
     {
         std::cout << "Round: " << i << std::endl;
         // DataModel data = initDataModel();
@@ -146,7 +145,7 @@ void VrpCapacity()
         std::vector<int> init_solution = RegretInsersion ("cumdistance", data.distance_matrix, data.demands, data.vehicle_capacity, data.num_vehicles, data.depot);
         std::vector<int> solution = covid19::Vns("cumdistance", init_solution, data.distance_matrix, data.demands, data.vehicle_capacity, data.depot);
 
-        // PrintSolution(data, solution);
+        PrintSolution(data, solution);
         round_costs.push_back(covid19::CalcDistanceCumCost(solution, data.distance_matrix, data.depot));
     }
 
