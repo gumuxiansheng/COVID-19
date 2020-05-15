@@ -1,3 +1,5 @@
+[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/gumuxiansheng/COVID-19) 
+
 # 武汉市疫情定点医院信息
 
 - hospitals-wuhan.json: 武汉市定点医院，来源腾讯疫情网站（https://card.wecity.qq.com/feverHosp/feverHospList?cityCode=420100&pageIndex=1&pageSize=999&partnerType=4&lat=0&lng=0&searchKey=）
