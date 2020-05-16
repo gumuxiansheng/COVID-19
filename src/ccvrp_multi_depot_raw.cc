@@ -37,7 +37,7 @@ DataModel initDataModel()
 
     data.distance_matrix = std::move(covid19::CalcDistances(christofides_data.nodes));
     data.demands = std::move(covid19::GetNodesRequirements(christofides_data.nodes));
-    int64_t sum_demands = accumulate(data.demands.begin(), data.demands.end(), 0);
+    int64_t sum_demands = std::accumulate(data.demands.begin(), data.demands.end(), 0);
     data.vehicle_capacity = christofides_data.capacity;
 
     return data;
@@ -52,11 +52,15 @@ DataModel initPRDataModel(std::string file_url)
     std::cout << "distance_matrix start: ";
     data.distance_matrix = std::move(covid19::CalcDistances(pr_data.nodes, DistanceType::euclidean, 1, 2));
     data.demands = std::move(covid19::GetNodesRequirements(pr_data.nodes, 4));
-    int64_t sum_demands = accumulate(data.demands.begin(), data.demands.end(), 0);
+    int64_t sum_demands = std::accumulate(data.demands.begin(), data.demands.end(), 0);
     data.vehicle_capacity = pr_data.capacity;
     data.depot = pr_data.depot_indexes;
 
-    int total_vehicles = 35;
+    int total_vehicles = std::ceil((float_t)sum_demands / (float_t)data.vehicle_capacity);
+    if (pr_data.vehicles > total_vehicles)
+    {
+        total_vehicles = pr_data.vehicles;
+    }
     std::random_device rd;
     std::default_random_engine e{rd()};
     std::uniform_int_distribution<unsigned> u(0, total_vehicles);

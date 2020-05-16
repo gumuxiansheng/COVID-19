@@ -252,7 +252,7 @@ namespace covid19
         int shake_max_no_improve = 10;
         std::uniform_int_distribution<unsigned> shakeMethodU(0, 2);
 
-        std::cout << "STAGE 1: " << std::endl;
+        std::cout << "STAGE 1: Local Search" << std::endl;
         do
         {
             count++;
@@ -273,7 +273,7 @@ namespace covid19
         do
         {
             shakeCount++;
-            std::cout << "STAGE 2: " << std::endl;
+            std::cout << "STAGE 2: Shake" << std::endl;
             int shakeTimes = 0;
             std::vector<int> shaking{};
             int64_t shaking_cost;
@@ -308,6 +308,7 @@ namespace covid19
 
             shaking_cost = CalcCost(type, shaking, distances, depot_indexes);
 
+            std::cout << "STAGE 3: Local Search" << std::endl;
             do
             {
                 count++;
@@ -326,7 +327,7 @@ namespace covid19
                 current_permutation = shaking;
             }
 
-            std::cout << "STAGE 3: " << std::endl;
+            std::cout << "STAGE 2: Shake Again" << std::endl;
             shakeMethod = shakeMethodU(e);
             switch (shakeMethod)
             {
@@ -355,6 +356,8 @@ namespace covid19
             } while (shakeTimes++ < 5);
 
             shaking_cost = CalcCost(type, shaking, distances, depot_indexes);
+
+            std::cout << "STAGE 3: Local Search Again" << std::endl;
             do
             {
                 count++;
@@ -373,49 +376,6 @@ namespace covid19
                 current_permutation = shaking;
             }
 
-            std::cout << "STAGE 4: " << std::endl;
-
-            std::vector<int> inline_permutation{nodes_permutation};
-            inline_permutation.erase(inline_permutation.begin());
-            inline_permutation.pop_back();
-            do
-            {
-                count++;
-                for (int i = 1; i < TRAVEL_SIZE - 3; i++)
-                {
-                    for (int k = 1; k < TRAVEL_SIZE - 2; k++)
-                    {
-                        if (k == i)
-                        {
-                            continue;
-                        }
-                        inline_permutation = TwoHOptSwap(inline_permutation, i, k);
-                        std::vector<int> neighbour;
-                        neighbour.push_back(nodes_permutation[0]);
-                        for (int j : inline_permutation)
-                        {
-                            neighbour.push_back(j);
-                        }
-                        neighbour.push_back(nodes_permutation[nodes_permutation.size() - 1]);
-
-                        if (!covid19::CheckMultiDepotRequirements(neighbour, nodes_requirements, capacity, depot_indexes))
-                        {
-                            continue;
-                        }
-                        int64_t neighbour_cost = CalcCost(type, neighbour, distances, depot_indexes);
-
-                        if (current_cost > neighbour_cost)
-                        {
-                            current_permutation = neighbour;
-                            current_cost = neighbour_cost;
-                            std::cout << "current_cost: " << current_cost << std::endl;
-                            count = 0;
-                            shakeCount = 0;
-                        }
-                    }
-                }
-
-            } while (count <= max_no_improve);
         } while (shakeCount <= shake_max_no_improve);
 
         return current_permutation;

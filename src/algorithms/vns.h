@@ -64,9 +64,15 @@ std::vector<int> TwoOptSwap(const std::vector<int>& nodes_permutation, int swap_
  */
 std::vector<int> TwoHOptSwap(const std::vector<int>& nodes_permutation, int swap_1, int swap_2);
 
+std::vector<int> ArcNodeSwap(const std::vector<int> &nodes_permutation, int swap_1, int swap_2);
+
+std::vector<int> ArcNodeMove(const std::vector<int> &nodes_permutation, int index_1, int index_2);
+
 std::vector<int> RelocationMove(const std::vector<int>& nodes_permutation, int item_index, int insert_index);
 
 std::vector<int> Shaking(const std::vector<int> &nodes_permutation, std::vector<int> (*shakingMethod)(const std::vector<int> &, int, int));
+
+std::vector<int> LocalSearch(int iStart, int iEnd, int kStart, int kEnd, const std::string type, const std::vector<int> &permutation, const std::vector<std::vector<int64_t>> &distances, const std::vector<int64_t> &nodes_requirements, int64_t capacity, const std::vector<int> &depot_indexes, int64_t &current_cost, int &count, std::vector<int> (*localSearchMethod)(const std::vector<int> &, int, int));
 
 /**
  * VNS(Variable Neighborhood Search) for multi depots with initial solution
