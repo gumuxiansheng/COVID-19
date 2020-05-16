@@ -3,6 +3,31 @@
 namespace covid19
 {
 
+std::string trim(std::string &s) 
+{
+    if (s.empty()) 
+    {
+        return s;
+    }
+
+    s.erase(0, s.find_first_not_of(" "));
+    int size = s.size();
+    for (int i = size - 1; i >= 0; i--)
+    {
+        if (s[i] != ' ' && s[i] != '\0' && s[i] != '\n' && s[i] != '\r')
+        {
+            break;
+        }
+
+        if (s[i] == ' ')
+        {
+            s.erase(i);
+        }
+    }
+    
+    return s;
+}
+
 /*
 function: ReadChristofides
 ! @brief: read in christofides file to matrix.
@@ -156,7 +181,7 @@ PRDataModel ReadPR(const std::string &file_name)
 {
     PRDataModel reData;
 
-    std::cout << "Read in ReadPR" << std::endl;
+    std::cout << "Read in ReadCordeau" << std::endl;
     std::vector<std::vector<int64_t>> nodes;
     std::fstream read_in_file;
     read_in_file.open(file_name, std::ios::in);
@@ -166,6 +191,7 @@ PRDataModel ReadPR(const std::string &file_name)
         int line_index = 0;
         while (getline(read_in_file, line_str))
         {
+            line_str = trim(line_str);
             if (line_index == 0)
             {
                 std::cout << "STARTL: " + line_str << std::endl; //print the data info at line 1
@@ -232,7 +258,7 @@ PRDataModel ReadPR(const std::string &file_name)
     }
     else
     {
-        std::cerr << "PR read file failed." << std::endl;
+        std::cerr << "Cordeau read file failed." << std::endl;
     }
 
     reData.nodes = nodes;

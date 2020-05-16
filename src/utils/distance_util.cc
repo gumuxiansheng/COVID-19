@@ -9,7 +9,7 @@ class DistanceEuclidean : public DistanceAlgorithm
 public:
     int64_t CalcDistance(int64_t x1, int64_t y1, int64_t x2, int64_t y2) override
     {
-        return (int64_t)pow(pow(x1 - x2, 2) + pow(y1 - y2, 2), 0.5);
+        return (int64_t)std::round(pow(pow(x1 - x2, 2) + pow(y1 - y2, 2), 0.5));
     };
 };
 

@@ -50,7 +50,7 @@ DataModel initPRDataModel(std::string file_url)
     covid19::PRDataModel pr_data = covid19::ReadPR(file_url);
 
     std::cout << "distance_matrix start: ";
-    data.distance_matrix = std::move(covid19::CalcDistances(pr_data.nodes, DistanceType::euclidean));
+    data.distance_matrix = std::move(covid19::CalcDistances(pr_data.nodes, DistanceType::euclidean, 1, 2));
     data.demands = std::move(covid19::GetNodesRequirements(pr_data.nodes, 4));
     int64_t sum_demands = accumulate(data.demands.begin(), data.demands.end(), 0);
     data.vehicle_capacity = pr_data.capacity;
@@ -86,6 +86,7 @@ DataModel initPRDataModel(std::string file_url)
         std::cout << vehicles[i] << "  ";
     }
     data.num_vehicles = vehicles;
+    // data.num_vehicles = {2, 2, 3, 2, 2};
 
     std::cout << std::endl << "initPRDataModel succeed" << std::endl;
 
@@ -136,14 +137,20 @@ void VrpCapacity()
     std::string file_url;
     std::cout << "please enter the PR file url:" << std::endl;
     std::cin >> file_url;
-    for (size_t i = 0; i < 1; i++)
+    for (size_t i = 0; i < 5; i++)
     {
         std::cout << "Round: " << i << std::endl;
         // DataModel data = initDataModel();
         DataModel data = initPRDataModel(file_url);
         // Use distance type to calc the inital solution
         // std::vector<int> init_solution = Vns ("distance", data.distance_matrix, data.demands, data.vehicle_capacity, data.num_vehicles, data.depot);
-        std::vector<int> init_solution = RegretInsersion ("cumdistance", data.distance_matrix, data.demands, data.vehicle_capacity, data.num_vehicles, data.depot);
+        std::vector<int> init_solution = RegretInsersion ("distance", data.distance_matrix, data.demands, data.vehicle_capacity, data.num_vehicles, data.depot);
+        // std::vector<int> init_solution = {51,44,45,33,15,37,17,51,51,42,19,40,41,13,51,51,25,18,4,51,52,6,27,1,32,11,46,52,52,48,8,26,31,28,22,52,52,23,7,43,24,14,52,52,12,47,52,53,9,34,30,39,10,53,53,49,5,38,53,54,35,36,3,20,54,54,21,50,16,2,29,54};
+        // for (auto &&i : init_solution)
+        // {
+        //     i = i - 1;
+        // }
+        // PrintSolution(data, init_solution);
         std::vector<int> solution = covid19::Vns("cumdistance", init_solution, data.distance_matrix, data.demands, data.vehicle_capacity, data.depot);
 
         PrintSolution(data, solution);
