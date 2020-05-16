@@ -7,31 +7,43 @@ namespace covid19
 bool CheckMultiDepotRequirements(const std::vector<int>& nodes_permutation, const std::vector<int64_t>& nodes_requirements, int64_t capacity, const std::vector<int>& depot_indexes)
 {
     int current_depot = nodes_permutation[0];
+    bool is_in_route = true;
     int64_t current_requirements = 0;
 
     for (int i = 1; i < nodes_permutation.size() - 1; i++)
     {
         // we only need to start from the one after start node because no requirement at the start node.
 
-        if (!IsIn(nodes_permutation[i], depot_indexes))
+        if (is_in_route)
         {
             current_requirements += nodes_requirements[nodes_permutation[i]];
             if (current_requirements > capacity)
             { // capacity check
                 return false;
             }
-        } else if (IsIn(nodes_permutation[i + 1], depot_indexes)){
-            if (current_depot != nodes_permutation[i])
+
+        }
+
+        if (IsIn(nodes_permutation[i], depot_indexes))
+        {
+            if (is_in_route)
             {
-                return false;
+                if (nodes_permutation[i] == current_depot)
+                { // depots check
+                    current_requirements = 0;
+                    is_in_route = false;
+                } else 
+                {
+                    return false;
+                }
+                
+            } else 
+            {
+                current_depot = nodes_permutation[i];
+                is_in_route = true;
             }
-            current_requirements = 0;
-
-        } else if (IsIn(nodes_permutation[i - 1], depot_indexes)){
-            current_depot = nodes_permutation[i];
-            current_requirements = 0;
-
-        } else
+            
+        } else if (!is_in_route)
         {
             return false;
         }

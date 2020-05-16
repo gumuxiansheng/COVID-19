@@ -66,6 +66,8 @@ std::vector<int> TwoHOptSwap(const std::vector<int>& nodes_permutation, int swap
 
 std::vector<int> RelocationMove(const std::vector<int>& nodes_permutation, int item_index, int insert_index);
 
+std::vector<int> Shaking(const std::vector<int> &nodes_permutation, std::vector<int> (*shakingMethod)(const std::vector<int> &, int, int));
+
 /**
  * VNS(Variable Neighborhood Search) for multi depots with initial solution
  * @param type, type of the cost function, "distance" or "cumdistance"

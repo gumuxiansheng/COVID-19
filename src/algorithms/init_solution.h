@@ -8,6 +8,7 @@
 #include <iostream>
 #include <vector>
 #include <set>
+#include <algorithm>
 #include "cost.h"
 #include "../utils/distance_util.h"
 #include "../utils/vector_help.h"
