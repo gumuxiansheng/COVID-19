@@ -13,6 +13,7 @@
 
 namespace covid19
 {
+    const int SHAKE_TIMES = 6; // how many shake times should a shaking method run
 
     std::vector<int> TwoSwap(const std::vector<int> &nodes_permutation, int swap_start_index, int swap_end_index)
     {
@@ -304,9 +305,14 @@ namespace covid19
                         break;
                     }
                 }
-            } while (shakeTimes++ < 5);
+            } while (shakeTimes++ < SHAKE_TIMES);
 
             shaking_cost = CalcCost(type, shaking, distances, depot_indexes);
+            if (shaking_cost - current_cost > 100)
+            {
+                count++;
+                continue;
+            }
 
             std::cout << "STAGE 3: Local Search" << std::endl;
             do
@@ -353,9 +359,14 @@ namespace covid19
                         break;
                     }
                 }
-            } while (shakeTimes++ < 5);
+            } while (shakeTimes++ < SHAKE_TIMES);
 
             shaking_cost = CalcCost(type, shaking, distances, depot_indexes);
+            if (shaking_cost - current_cost > 100)
+            {
+                count++;
+                continue;
+            }
 
             std::cout << "STAGE 3: Local Search Again" << std::endl;
             do

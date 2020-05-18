@@ -30,7 +30,6 @@ std::vector<std::vector<int64_t>> CalcDistances(
     const std::vector<std::vector<int64_t>>& locations,
     DistanceAlgorithm *algorithm, int loc_x_i = 0, int loc_y_i = 1);
 
-void WriteResults(const std::vector<int> &nodes_permutation, const std::string file_name);
 } // namespace covid19
 
 #endif // COVID19_DISTANCE_H_

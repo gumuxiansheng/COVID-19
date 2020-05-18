@@ -211,6 +211,11 @@ PRDataModel ReadPR(const std::string &file_name)
                             reData.vehicles = std::stoi(loc_t_s);
                         } else if (space_count == 5)
                         {
+                            if (i == line_str.size() - 1)
+                            {
+                                loc_t_s.append(1, line_str[i]);
+                            }
+                            
                             reData.capacity = std::stoi(loc_t_s);
                         }
                         loc_t_s = "";
