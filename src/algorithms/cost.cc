@@ -45,7 +45,6 @@ int64_t CalcDistanceCumCost(const std::vector<int> &nodes_permutation, const std
     int64_t total_distance = 0;
     int64_t temp_distance = 0;
 
-    std::vector<int64_t> node_cum_distance{};
     for (int i = 0; i < ARCH_SIZE; i++)
     {
         int start_node_index = nodes_permutation[i];
@@ -58,13 +57,9 @@ int64_t CalcDistanceCumCost(const std::vector<int> &nodes_permutation, const std
         {
             temp_distance = 0;
         }
-        node_cum_distance.push_back(temp_distance);
+        total_distance += temp_distance;
     }
 
-    for (size_t i = 0; i < node_cum_distance.size(); i++)
-    {
-        total_distance += node_cum_distance[i];
-    }
 
     return total_distance;
 }

@@ -17,42 +17,19 @@ namespace covid19
 
     std::vector<int> TwoSwap(const std::vector<int> &nodes_permutation, int swap_start_index, int swap_end_index)
     {
-        const int TRAVEL_SIZE = nodes_permutation.size();
-        std::vector<int> v;
-        for (int i = 0; i < TRAVEL_SIZE; ++i)
-        {
-            if (i == swap_start_index)
-            {
-                v.push_back(nodes_permutation[swap_end_index]);
-            }
-            else if (i == swap_end_index)
-            {
-                v.push_back(nodes_permutation[swap_start_index]);
-            }
-            else
-            {
-                v.push_back(nodes_permutation[i]);
-            }
-        }
+        std::vector<int> v{nodes_permutation};
+        v[swap_start_index] = nodes_permutation[swap_end_index];
+        v[swap_end_index] = nodes_permutation[swap_start_index];
 
         return v;
     }
 
     std::vector<int> TwoOptSwap(const std::vector<int> &nodes_permutation, int swap_start_index, int swap_end_index)
     {
-        const int TRAVEL_SIZE = nodes_permutation.size();
-        std::vector<int> v;
-        for (int i = 0; i < swap_start_index; i++)
+        std::vector<int> v{nodes_permutation};
+        for (int i = swap_start_index; i <= swap_end_index; i++)
         {
-            v.push_back(nodes_permutation[i]);
-        }
-        for (int i = swap_end_index; i >= swap_start_index; i--)
-        {
-            v.push_back(nodes_permutation[i]);
-        }
-        for (int i = swap_end_index + 1; i < TRAVEL_SIZE; i++)
-        {
-            v.push_back(nodes_permutation[i]);
+            v[i] = nodes_permutation[swap_start_index + swap_end_index - i];
         }
 
         return v;
@@ -61,7 +38,7 @@ namespace covid19
     std::vector<int> TwoHOptSwap(const std::vector<int> &nodes_permutation, int swap_1, int swap_2)
     {
         const int TRAVEL_SIZE = nodes_permutation.size();
-        std::vector<int> v;
+        std::vector<int> v(TRAVEL_SIZE);
         if (swap_1 > swap_2)
         {
             int temp = swap_1;
@@ -69,15 +46,17 @@ namespace covid19
             swap_2 = temp;
         }
 
-        v.push_back(nodes_permutation[swap_1]);
-        v.push_back(nodes_permutation[swap_2]);
+        int v_index = 0;
+
+        v[v_index++] = nodes_permutation[swap_1];
+        v[v_index++] = nodes_permutation[swap_2];
 
         for (int i = 1; i < TRAVEL_SIZE; ++i)
         {
             int idx = (swap_1 + i) % TRAVEL_SIZE;
             if (idx != swap_2)
             {
-                v.push_back(nodes_permutation[idx]);
+                v[v_index++] = nodes_permutation[idx];
             }
         }
 
@@ -91,23 +70,26 @@ namespace covid19
             return nodes_permutation;
         }
 
-        std::vector<int> v{};
+        const int TRAVEL_SIZE = nodes_permutation.size();
+        std::vector<int> v(TRAVEL_SIZE);
 
-        for (size_t i = 0; i < nodes_permutation.size(); i++)
+        int v_index = 0;
+
+        for (size_t i = 0; i < TRAVEL_SIZE; i++)
         {
             if (i == swap_1)
             {
-                v.push_back(nodes_permutation[swap_2]);
+                v[v_index++] = nodes_permutation[swap_2];
             } else if (i == swap_1 + 1)
             {
                 continue;
             } else if (i == swap_2)
             {
-                v.push_back(nodes_permutation[swap_1]);
-                v.push_back(nodes_permutation[swap_1 + 1]);
+                v[v_index++] = nodes_permutation[swap_1];
+                v[v_index++] = nodes_permutation[swap_1 + 1];
             } else
             {
-                v.push_back(nodes_permutation[i]);
+                v[v_index++] = nodes_permutation[i];
             }
         }
         
@@ -121,21 +103,24 @@ namespace covid19
             return nodes_permutation;
         }
 
-        std::vector<int> v{};
+        const int TRAVEL_SIZE = nodes_permutation.size();
+        std::vector<int> v(TRAVEL_SIZE);
 
-        for (size_t i = 0; i < nodes_permutation.size(); i++)
+        int v_index = 0;
+
+        for (size_t i = 0; i < TRAVEL_SIZE; i++)
         {
             if (i == index_1 || i == index_1 + 1)
             {
                 continue;
             } else if (i == index_2)
             {
-                v.push_back(nodes_permutation[i]);
-                v.push_back(nodes_permutation[index_1]);
-                v.push_back(nodes_permutation[index_1 + 1]);
+                v[v_index++] = nodes_permutation[i];
+                v[v_index++] = nodes_permutation[index_1];
+                v[v_index++] = nodes_permutation[index_1 + 1];
             } else
             {
-                v.push_back(nodes_permutation[i]);
+                v[v_index++] = nodes_permutation[i];
             }
         }
         
@@ -150,7 +135,9 @@ namespace covid19
             return nodes_permutation;
         }
         const int TRAVEL_SIZE = nodes_permutation.size();
-        std::vector<int> v;
+        std::vector<int> v(TRAVEL_SIZE);
+
+        int v_index = 0;
 
         for (size_t i = 0; i < TRAVEL_SIZE; i++)
         {
@@ -160,9 +147,9 @@ namespace covid19
             }
             else if (i == insert_index)
             {
-                v.push_back(nodes_permutation[item_index]);
+                v[v_index++] = nodes_permutation[item_index];
             }
-            v.push_back(nodes_permutation[i]);
+            v[v_index++] = nodes_permutation[i];
         }
 
         return v;
@@ -182,10 +169,12 @@ namespace covid19
 
     std::vector<int> LocalSearch(int iStart, int iEnd, int kStart, int kEnd, const std::string type, const std::vector<int> &permutation, const std::vector<std::vector<int64_t>> &distances, const std::vector<int64_t> &nodes_requirements, int64_t capacity, const std::vector<int> &depot_indexes, int64_t &current_cost, int &count, std::vector<int> (*localSearchMethod)(const std::vector<int> &, int, int))
     {
+        count++;
         int search_better_depth = 3;
         std::vector<int64_t> local_search_better_cost{};
         std::vector<std::vector<int>> local_search_better_permutation{};
         std::vector<int> current_permutation{permutation};
+        std::vector<int> neighbour;
 
         for (int i = iStart; i < iEnd; i++)
         {
@@ -195,7 +184,7 @@ namespace covid19
             }
             for (int k = kStart; k < kEnd; k++)
             {
-                std::vector<int> neighbour = localSearchMethod(current_permutation, i, k);
+                neighbour = localSearchMethod(current_permutation, i, k);
 
                 if (!covid19::CheckMultiDepotRequirements(neighbour, nodes_requirements, capacity, depot_indexes))
                 {
@@ -248,7 +237,7 @@ namespace covid19
         int shakeCount = 0;
         std::random_device rd;
         std::default_random_engine e{rd()};
-        std::uniform_int_distribution<unsigned> u(2, 11);
+        std::uniform_int_distribution<unsigned> u(5, 18);
         int max_no_improve = u(e);
         int shake_max_no_improve = 10;
         std::uniform_int_distribution<unsigned> shakeMethodU(0, 2);
@@ -256,7 +245,6 @@ namespace covid19
         std::cout << "STAGE 1: Local Search" << std::endl;
         do
         {
-            count++;
 
             current_permutation = LocalSearch(1, TRAVEL_SIZE - 2, -1, TRAVEL_SIZE - 1, type, current_permutation, distances, nodes_requirements, capacity, depot_indexes, current_cost, count, TwoSwap);
 
@@ -308,7 +296,7 @@ namespace covid19
             } while (shakeTimes++ < SHAKE_TIMES);
 
             shaking_cost = CalcCost(type, shaking, distances, depot_indexes);
-            if (shaking_cost - current_cost > 100)
+            if (shaking_cost - current_cost > 0.2 * current_cost)
             {
                 count++;
                 continue;
@@ -317,7 +305,6 @@ namespace covid19
             std::cout << "STAGE 3: Local Search" << std::endl;
             do
             {
-                count++;
                 shaking = LocalSearch(1, TRAVEL_SIZE - 3, 1, TRAVEL_SIZE - 1, type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count, ArcNodeMove);
 
                 shaking = LocalSearch(1, TRAVEL_SIZE - 2, -1, TRAVEL_SIZE - 1, type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count, TwoSwap);
@@ -362,7 +349,7 @@ namespace covid19
             } while (shakeTimes++ < SHAKE_TIMES);
 
             shaking_cost = CalcCost(type, shaking, distances, depot_indexes);
-            if (shaking_cost - current_cost > 100)
+            if (shaking_cost - current_cost > 0.2 * current_cost)
             {
                 count++;
                 continue;
@@ -371,7 +358,6 @@ namespace covid19
             std::cout << "STAGE 3: Local Search Again" << std::endl;
             do
             {
-                count++;
 
                 shaking = LocalSearch(1, TRAVEL_SIZE - 3, 1, TRAVEL_SIZE - 1, type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count, ArcNodeMove);
 
