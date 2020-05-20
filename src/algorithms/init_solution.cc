@@ -143,6 +143,10 @@ std::vector<int> RegretInsersion (const std::string type, const std::vector<std:
     {
         int depot = depot_route[0];
         int min_point = 0;
+        if (remain_customers.empty())
+        {
+            break;
+        }
         int64_t min_dis = distances[depot][remain_customers[min_point]];
         for (size_t index = 0; index < remain_customers.size(); index++)
         {

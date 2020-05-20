@@ -49,7 +49,8 @@ DataModel initPRDataModel(std::string file_url)
 {
     DataModel data;
 
-    covid19::PRDataModel pr_data = covid19::ReadPR(file_url);
+    // covid19::PRDataModel pr_data = covid19::ReadPR(file_url);
+    covid19::PRDataModel pr_data = covid19::ReadPRFloat(file_url);
 
     std::cout << "distance_matrix start: ";
     data.distance_matrix = std::move(covid19::CalcDistances(pr_data.nodes, DistanceType::euclidean, 1, 2));
