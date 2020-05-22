@@ -285,7 +285,7 @@ PRDataModel ReadPRFloat(const std::string &file_name)
     const int SCALE = 1000; // to convert float to int, times 1000 as the file contains 3 digits decimal.
     PRDataModel reData;
 
-    std::cout << "Read in ReadCordeau" << std::endl;
+    std::cout << "Read in ReadCordeau:" << file_name << std::endl;
     std::vector<std::vector<int64_t>> nodes;
     std::fstream read_in_file;
     read_in_file.open(file_name, std::ios::in);
@@ -389,6 +389,68 @@ PRDataModel ReadPRFloat(const std::string &file_name)
     // }
 
     return reData;
+}
+
+std::vector<int> ReadResultSolution(const std::string &file_name)
+{
+    std::vector<int> solution{};
+    std::fstream read_in_file;
+    read_in_file.open(file_name, std::ios::in);
+    if (read_in_file.is_open())
+    { //checking whether the file is open
+        std::string line_str;
+        int line_index = 0;
+        while (getline(read_in_file, line_str))
+        {
+            line_str = trim(line_str);
+
+            std::string loc_t_s;
+            int8_t space_continued = 0;
+            bool start_route = false;
+            for (size_t i = 0; i < line_str.size() + 1; i++)
+            {
+                if (line_str[i] == 'B')
+                { // last line to log total cost and run time
+                    break;
+                }
+                if (start_route)
+                {
+                    if (i == line_str.size() || (line_str[i] == ' ' && i != 0 && line_str[i - 1] != ' '))
+                    {
+
+                        solution.push_back(std::stoi(loc_t_s));
+                        loc_t_s = "";
+                    }
+                    else if (line_str[i] != ' ')
+                    {
+                        loc_t_s.append(1, line_str[i]);
+                    }
+                }
+
+                if (line_str[i] == ' ')
+                {
+                    space_continued++;
+                } else
+                {
+                    space_continued = 0;
+                }
+                if (space_continued == 4)
+                {
+                    start_route = true;
+                }
+
+            }
+
+            line_index++;
+        }
+        read_in_file.close(); //close the file object.
+    }
+    else
+    {
+        std::cerr << "ResultSolution read file failed." << std::endl;
+    }
+
+    return solution;
 }
 
 /*
