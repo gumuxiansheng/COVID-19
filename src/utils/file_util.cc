@@ -3,6 +3,8 @@
 namespace covid19
 {
 
+const int SCALE = 1000; // to convert float to int, times 1000 as the file contains 3 digits decimal.
+
 std::string trim(std::string &s) 
 {
     if (s.empty()) 
@@ -282,10 +284,10 @@ PRDataModel ReadPR(const std::string &file_name)
 
 PRDataModel ReadPRFloat(const std::string &file_name)
 {
-    const int SCALE = 1000; // to convert float to int, times 1000 as the file contains 3 digits decimal.
+
     PRDataModel reData;
 
-    std::cout << "Read in ReadCordeau:" << file_name << std::endl;
+    std::cout << "Read in ReadCordeau: " << file_name << std::endl;
     std::vector<std::vector<int64_t>> nodes;
     std::fstream read_in_file;
     read_in_file.open(file_name, std::ios::in);
@@ -387,6 +389,140 @@ PRDataModel ReadPRFloat(const std::string &file_name)
     //     }
     //     std::cout << std::endl;
     // }
+
+    return reData;
+}
+
+PRDataModel ReadLRFloat(const std::string &file_name)
+{
+    PRDataModel reData;
+
+    std::cout << "Read in ReadLR: " << file_name << std::endl;
+    std::vector<std::vector<int64_t>> nodes;
+    std::fstream read_in_file;
+    int nodes_num{0};
+    int depots_num{0};
+    read_in_file.open(file_name, std::ios::in);
+    if (read_in_file.is_open())
+    { //checking whether the file is open
+        std::string line_str;
+        int line_index = 0;
+        while (getline(read_in_file, line_str))
+        {
+            line_str = trim(line_str);
+            if (line_index == 0)
+            {
+                std::cout << "STARTL: " + line_str << std::endl; //print the data info at line 1
+
+                std::string loc_t_s;
+                int space_count = 0;
+                for (size_t i = 0; i < line_str.size(); i++)
+                {
+                    if (line_str[i] == ' ' || i == line_str.size() - 1)
+                    {
+                        if (i == 0 || line_str[i - 1] == ' ')
+                        {
+                            continue;
+                        }
+                        if (++space_count == 1)
+                        {
+                            reData.vehicles = std::stoi(loc_t_s);
+                        } else if(space_count == 2)
+                        {
+                            nodes_num = std::stoi(loc_t_s);
+                        }  else if(space_count == 3)
+                        {
+                            depots_num = std::stoi(loc_t_s);
+                        } else if (space_count == 4)
+                        {
+                            if (i == line_str.size() - 1)
+                            {
+                                loc_t_s.append(1, line_str[i]);
+                            }
+                            
+                            reData.capacity = std::stoi(loc_t_s);
+                        }
+                        loc_t_s = "";
+                    }
+                    else
+                    {
+                        loc_t_s.append(1, line_str[i]);
+                    }
+                }
+            }
+            else if (line_index == 1 || line_index == nodes_num + depots_num + 2)
+            { // there is a space line after head
+                line_index++;
+                continue;
+            }
+            else if (line_index < nodes_num + depots_num + 2)
+            {
+                std::vector<int64_t> loc_vec;
+                std::string loc_t_s;
+                for (size_t i = 0; i < line_str.size() + 1; i++)
+                {
+                    if (i == line_str.size() || (line_str[i] == ' ' && i != 0 && line_str[i - 1] != ' '))
+                    {
+                        loc_vec.push_back(std::stof(loc_t_s) * SCALE);
+                        loc_t_s = "";
+                    }
+                    else if (line_str[i] != ' ')
+                    {
+                        loc_t_s.append(1, line_str[i]);
+                    }
+                }
+                if (line_index >= nodes_num + 2)
+                { // it's depot
+                    reData.depot_indexes.push_back(nodes.size());
+                }
+                nodes.push_back(loc_vec);
+            } else
+            {
+                std::vector<int64_t> *p_line_node = &nodes[line_index - (nodes_num + depots_num + 2) - 1];
+                std::string loc_t_s;
+                for (size_t i = 0; i < line_str.size() + 1; i++)
+                {
+                    if (i == line_str.size() || (line_str[i] == ' ' && i != 0 && line_str[i - 1] != ' '))
+                    {
+                        p_line_node->push_back(std::stof(loc_t_s));
+                        loc_t_s = "";
+                    }
+                    else if (line_str[i] != ' ')
+                    {
+                        loc_t_s.append(1, line_str[i]);
+                    }
+                }
+
+            }
+
+            line_index++;
+        }
+        read_in_file.close(); //close the file object.
+        // std::cerr << "PR read file succeed." << std::endl;
+    }
+    else
+    {
+        std::cerr << "Cordeau read file failed." << std::endl;
+    }
+
+    std::cout << "Nodes:" << std::endl;
+    for (auto node : nodes)
+    {
+        for (auto item : node)
+        {
+            std::cout << item << "    ";
+        }
+        std::cout << std::endl;
+    }
+
+    std::cout << "Depots:" << std::endl;
+    for (auto item : reData.depot_indexes)
+    {
+        std::cout << item << "    ";
+        std::cout << std::endl;
+    }
+
+    reData.nodes = nodes;
 
     return reData;
 }

@@ -19,6 +19,26 @@ namespace covid19
 
 const int16_t INNER_ROUND = 1;
 const int16_t OUTER_ROUND = 3;
+const std::vector<std::string> LR_FILES{
+    "10x4-1.txt",
+    "10x4-2.txt",
+    "10x4-3.txt",
+    "25x4-1.txt",
+    "25x4-2.txt",
+    "25x4-3.txt",
+    "50x4-1.txt",
+    "50x4-2.txt",
+    "50x4-3.txt",
+    "50x6-1.txt",
+    "50x6-2.txt",
+    "50x6-3.txt",
+    "100x4-1.txt",
+    "100x4-2.txt",
+    "100x4-3.txt",
+    "100x6-1.txt",
+    "100x6-2.txt",
+    "100x6-3.txt"
+};
 
 struct DataModel
 {
@@ -49,16 +69,28 @@ DataModel initDataModel()
     return data;
 }
 
-DataModel initPRDataModel(std::string file_url)
+DataModel initPRDataModel(const std::string file_url, const std::string type = "p")
 {
     DataModel data;
 
     // covid19::PRDataModel pr_data = covid19::ReadPR(file_url);
-    covid19::PRDataModel pr_data = covid19::ReadPRFloat(file_url);
+    covid19::PRDataModel pr_data = type == "lr" ? covid19::ReadLRFloat(file_url) : covid19::ReadPRFloat(file_url);
 
     std::cout << "distance_matrix start: ";
-    data.distance_matrix = std::move(covid19::CalcDistances(pr_data.nodes, DistanceType::euclidean, 1, 2));
-    data.demands = std::move(covid19::GetNodesRequirements(pr_data.nodes, 4));
+    int locx, locy, locr{};
+    if (type == "p" || type == "pr")
+    {
+        locx = 1;
+        locy = 2;
+        locr = 4;
+    } else if (type == "lr")
+    {
+        locx = 0;
+        locy = 1;
+        locr = 2;
+    }
+    data.distance_matrix = std::move(covid19::CalcDistances(pr_data.nodes, DistanceType::euclidean, locx, locy));
+    data.demands = std::move(covid19::GetNodesRequirements(pr_data.nodes, locr));
     data.vehicle_capacity = pr_data.capacity;
     data.depot = pr_data.depot_indexes;
 
@@ -208,7 +240,7 @@ void WriteResults(const DataModel &data, const std::vector<int> &nodes_permutati
     outfile.close();
 }
 
-void VrpCapacity(const std::string &data_folder, const std::string &file_name, const int round)
+void VrpCapacity(const std::string &data_folder, const std::string &file_name, const int round, std::string type)
 {
     std::vector<int64_t> round_costs{};
     std::vector<std::vector<int>> round_solutions{};
@@ -222,11 +254,14 @@ void VrpCapacity(const std::string &data_folder, const std::string &file_name, c
     {
         clock_t start_time, end_time;
         std::cout << "Round: " << i << std::endl;
-        data = initPRDataModel(file_url);
+        data = initPRDataModel(file_url, type);
 
         start_time = clock();
 
         std::vector<int> init_solution = ReadResultSolution(initial_solution_file_url);
+
+        // std::cout << "INIT SOLUTION" << std::endl;
+        // PrintSolution(data, init_solution);
 
         std::vector<int> solution = covid19::Vns("cumdistance", init_solution, data.distance_matrix, data.demands, data.vehicle_capacity, data.depot);
 
@@ -260,9 +295,10 @@ void VrpCapacity(const std::string &data_folder, const std::string &file_name, c
 
 }
 
-void InitialSolutionWithFolder(std::string type, std::string data_folder)
+std::vector<std::string> GetFileNames(std::string type, std::string data_folder)
 {
     int file_num;
+
     if (type == "p")
     {
         file_num = 18;
@@ -271,10 +307,12 @@ void InitialSolutionWithFolder(std::string type, std::string data_folder)
     {
         file_num = 10;
     }
-    else
+    else if (type == "lr")
     {
-        return;
+        return LR_FILES;
     }
+
+    std::vector<std::string> files{};
 
     for (size_t i = 1; i < file_num + 1; i++)
     {
@@ -283,15 +321,27 @@ void InitialSolutionWithFolder(std::string type, std::string data_folder)
             continue;
         }
         std::string item = i < 10 ? "0" + std::to_string(i) : std::to_string(i);
-        std::string file_url = data_folder + type + item + "_1.txt";
+        
+        files.push_back(type + item + "_1.txt");
+    }
 
-        DataModel data = initPRDataModel(file_url);
+    return files;
+}
+
+void InitialSolutionWithFolder(const std::string& type, const std::string& data_folder)
+{
+    auto files = GetFileNames(type, data_folder);
+
+    for (auto &&file_name : files)
+    {
+        std::string file_url = data_folder + file_name;
+        DataModel data = initPRDataModel(file_url, type);
         std::vector<int> init_solution = RegretInsersion("cumdistance", data.distance_matrix, data.demands, data.vehicle_capacity, data.num_vehicles, data.depot);
 
         const char *mkdir_code = ("mkdir " + data_folder + "initial_solution/").c_str();
         system(mkdir_code);
 
-        std::string out_file = data_folder + "initial_solution/" + type + item + "_1.txt";
+        std::string out_file = data_folder + "initial_solution/" + file_name;
 
         std::cout << "WriteResults:" << out_file << std::endl;
         covid19::WriteResults(data, init_solution, 0, out_file);
@@ -301,38 +351,25 @@ void InitialSolutionWithFolder(std::string type, std::string data_folder)
 void VrpCapacityWithFolder(const std::string &type, const std::string &data_folder, const int round)
 {
 
-    int file_num;
-    if (type == "p")
-    {
-        file_num = 18;
-    } else if (type == "pr")
-    {
-        file_num = 10;
-    } else 
-    {
-        return;
-    }
+    auto files = GetFileNames(type, data_folder);
 
-    for (size_t i = 1; i < file_num + 1; i++)
+    for (auto &&file_name : files)
     {
-        if (i == 16 || i == 17)
-        {
-            continue;
-        }
-
-        std::string item = i < 10 ? "0"  + std::to_string(i) : std::to_string(i);
-
-        VrpCapacity(data_folder, type + item + "_1.txt", round);
+        VrpCapacity(data_folder, file_name, round, type);
     }
 }
 }
 
 int main(int argc, char **argv)
 {
-    std::cout << "p or pr?" << std::endl;
+    std::cout << "p or pr or lr?" << std::endl;
     std::string type;
     std::cin >> type;
     std::string folder = "/Users/mikezhu/Dev/CPP/COVID-19/data/demo/";
+    if (type == "lr")
+    {
+        folder += "lr/";
+    }
 
     covid19::InitialSolutionWithFolder(type, folder);
 
