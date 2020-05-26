@@ -17,8 +17,8 @@
 namespace covid19
 {
 
-const int16_t INNER_ROUND = 1;
-const int16_t OUTER_ROUND = 3;
+const int16_t INNER_ROUND = 3;
+const int16_t OUTER_ROUND = 1;
 const std::vector<std::string> LR_FILES{
     "10x4-1.txt",
     "10x4-2.txt",
@@ -260,8 +260,8 @@ void VrpCapacity(const std::string &data_folder, const std::string &file_name, c
 
         std::vector<int> init_solution = ReadResultSolution(initial_solution_file_url);
 
-        // std::cout << "INIT SOLUTION" << std::endl;
-        // PrintSolution(data, init_solution);
+        std::cout << "INIT SOLUTION" << std::endl;
+        PrintSolution(data, init_solution);
 
         std::vector<int> solution = covid19::Vns("cumdistance", init_solution, data.distance_matrix, data.demands, data.vehicle_capacity, data.depot);
 
@@ -315,6 +315,7 @@ std::vector<std::string> GetFileNames(std::string type, std::string data_folder)
     std::vector<std::string> files{};
 
     for (size_t i = 1; i < file_num + 1; i++)
+    // for (size_t i = 7; i < 9 + 1; i++)
     {
         if (i == 16 || i == 17)
         {
@@ -371,7 +372,7 @@ int main(int argc, char **argv)
         folder += "lr/";
     }
 
-    covid19::InitialSolutionWithFolder(type, folder);
+    // covid19::InitialSolutionWithFolder(type, folder);
 
     for (size_t i = 0; i < covid19::OUTER_ROUND; i++)
     {
