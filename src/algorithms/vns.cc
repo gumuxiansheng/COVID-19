@@ -175,7 +175,7 @@ namespace covid19
         {
             std::vector<int64_t> sort_distance{distances[i]};
             std::sort(sort_distance.begin(), sort_distance.end());
-            int64_t reduction_anchor = sort_distance[sort_distance.size() * 0.08];
+            int64_t reduction_anchor = sort_distance[sort_distance.size() * 0.08 + 1];
 
             std::vector<bool> nrx{};
             for (auto &&item : distances[i])
@@ -189,7 +189,7 @@ namespace covid19
         return neighbourReduction;
     }
 
-    std::vector<int> LocalSearch(int iStart, int iEnd, int kStart, int kEnd, const std::string type, const std::vector<int> &permutation, const std::vector<std::vector<int64_t>> &distances, const std::vector<int64_t> &nodes_requirements, int64_t capacity, const std::vector<int> &depot_indexes, int64_t &current_cost, int &count, std::vector<int> (*localSearchMethod)(const std::vector<int> &, int, int), const std::vector<std::vector<bool>> &neighbourReduction)
+    std::vector<int> LocalSearch(int iStart, int iEnd, int kStart, int kEnd, const std::string type, const std::vector<int> &permutation, const std::vector<std::vector<int64_t>> &distances, const std::vector<int64_t> &nodes_requirements, int64_t capacity, const std::vector<int> &depot_indexes, int64_t &current_cost, int &count, std::vector<int> (*localSearchMethod)(const std::vector<int> &, int, int), const std::vector<std::vector<bool>> &neighbourReduction, const bool intraOnly)
     {
         count++;
 
@@ -211,25 +211,27 @@ namespace covid19
             }
             for (int k = kStart; k < kEnd; k++)
             {
-                // int l = i;
-                // int r = k;
-                // if (k < i)
-                // {
-                //     l = k;
-                //     r = i;
-                // }
-                // for (size_t j = l; j < r; j++)
-                // {
-                //     if (IsIn(current_permutation[j], depot_indexes))
-                //     {
-                //         if(i < iEnd - 1)
-                //         {
-                //             i++;
-                //             k = kStart;
-                //         }
-
-                //     }
-                // }
+                if (intraOnly)
+                {
+                    int l = i;
+                    int r = k;
+                    if (k < i)
+                    {
+                        l = k;
+                        r = i;
+                    }
+                    for (size_t j = l; j < r; j++)
+                    {
+                        if (IsIn(current_permutation[j], depot_indexes))
+                        {
+                            if (i < iEnd - 1)
+                            {
+                                i++;
+                                k = kStart;
+                            }
+                        }
+                    }
+                }
                 if (!neighbourReduction[current_permutation[k]][current_permutation[i]] && !neighbourReduction[current_permutation[k]][current_permutation[i + 1]])
                 {
                     continue;
@@ -318,6 +320,7 @@ namespace covid19
         do
         {
             shakeCount++;
+            shake_times++;
             std::cout << "STAGE 2: Shake" << std::endl;
             int shakeTimes = 0;
             std::vector<int> shaking{};
@@ -440,6 +443,8 @@ namespace covid19
             }
 
         } while (shakeCount <= shake_max_no_improve);
+
+        current_permutation = LocalSearch(1, TRAVEL_SIZE - 2, -1, TRAVEL_SIZE - 1, type, current_permutation, distances, nodes_requirements, capacity, depot_indexes, current_cost, count, RelocationMove, neighbourReduction, true);
 
         return current_permutation;
     }

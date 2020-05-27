@@ -123,7 +123,8 @@ void AssignVehicles(DataModel &data, const int &input_vehicles, std::string type
 
         for (size_t i = 0; i < total_vehicles % depots_num; i++)
         {
-            vehicles[i] += 1;
+            int index = depots_num - 1 - i;
+            vehicles[index] += 1;
         }
 
         data.num_vehicles = vehicles;
@@ -372,7 +373,7 @@ int main(int argc, char **argv)
         folder += "lr/";
     }
 
-    // covid19::InitialSolutionWithFolder(type, folder);
+     covid19::InitialSolutionWithFolder(type, folder);
 
     for (size_t i = 0; i < covid19::OUTER_ROUND; i++)
     {
