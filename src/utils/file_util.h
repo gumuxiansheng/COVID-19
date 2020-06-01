@@ -5,6 +5,8 @@
 #include <vector>
 #include <fstream>
 #include <string>
+// #include <dirent.h>
+// #include <stdlib.h>
 
 namespace covid19
 {
@@ -35,6 +37,8 @@ std::vector<int> ReadResultSolution(const std::string &file_name);
 std::vector<int64_t> GetNodesRequirements(std::vector<std::vector<int64_t>> nodes, int requirement_col = 2);
 
 std::vector<std::vector<int64_t>> ReadDistancesCSV(const std::string &file_name);
+
+// std::vector<std::string> ListFiles(std::string folder);
 
 } // namespace covid19
 

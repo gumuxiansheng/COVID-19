@@ -17,27 +17,27 @@
 namespace covid19
 {
 
-const int16_t INNER_ROUND = 3;
+const int16_t INNER_ROUND = 1;
 const int16_t OUTER_ROUND = 1;
 const std::vector<std::string> LR_FILES{
-    "10x4-1.txt",
-    "10x4-2.txt",
-    "10x4-3.txt",
-    "25x4-1.txt",
-    "25x4-2.txt",
-    "25x4-3.txt",
-    "50x4-1.txt",
-    "50x4-2.txt",
-    "50x4-3.txt",
-    "50x6-1.txt",
-    "50x6-2.txt",
-    "50x6-3.txt",
-    "100x4-1.txt",
-    "100x4-2.txt",
-    "100x4-3.txt",
-    "100x6-1.txt",
-    "100x6-2.txt",
-    "100x6-3.txt"
+    "lr01_1.txt",
+    "lr02_1.txt",
+    "lr03_1.txt",
+    "lr04_1.txt",
+    "lr05_1.txt",
+    "lr06_1.txt",
+    "lr07_1.txt",
+    "lr08_1.txt",
+    "lr09_1.txt",
+    "lr10_1.txt",
+    "lr11_1.txt",
+    "lr12_1.txt",
+    "lr13_1.txt",
+    "lr14_1.txt",
+    "lr15_1.txt",
+    "lr16_1.txt",
+    "lr17_1.txt",
+    "lr18_1.txt"
 };
 
 struct DataModel
@@ -94,7 +94,7 @@ DataModel initPRDataModel(const std::string file_url, const std::string type = "
     data.vehicle_capacity = pr_data.capacity;
     data.depot = pr_data.depot_indexes;
 
-    AssignVehicles(data, pr_data.vehicles, "uniform");
+    AssignVehicles(data, pr_data.vehicles, "regret");
 
     std::cout << std::endl << "initPRDataModel succeed" << std::endl;
 
@@ -123,12 +123,51 @@ void AssignVehicles(DataModel &data, const int &input_vehicles, std::string type
 
         for (size_t i = 0; i < total_vehicles % depots_num; i++)
         {
+            vehicles[i] += 1;
+        }
+
+        data.num_vehicles = vehicles;
+    } else if (type == "uniform_reverse")
+    {
+        // distribute vehicles uniformly
+        std::vector<int> vehicles{};
+        int depots_num = data.depot.size();
+        int mean_vehicle_num = total_vehicles / depots_num;
+        for (size_t i = 0; i < depots_num; i++)
+        {
+            vehicles.push_back(mean_vehicle_num);
+        }
+
+        for (size_t i = 0; i < total_vehicles % depots_num; i++)
+        {
             int index = depots_num - 1 - i;
             vehicles[index] += 1;
         }
 
         data.num_vehicles = vehicles;
-    } else
+    } else if (type == "uniform_random")
+    {
+        // distribute vehicles uniformly
+        std::vector<int> vehicles{};
+        int depots_num = data.depot.size();
+        int mean_vehicle_num = total_vehicles / depots_num;
+        for (size_t i = 0; i < depots_num; i++)
+        {
+            vehicles.push_back(mean_vehicle_num);
+        }
+
+        std::random_device rd;
+        std::default_random_engine e{rd()};
+        std::uniform_int_distribution<int> u(0, total_vehicles % depots_num - 1);
+
+        for (size_t i = 0; i < total_vehicles % depots_num; i++)
+        {
+            int index = u(e);
+            vehicles[index] += 1;
+        }
+
+        data.num_vehicles = vehicles;
+    } else if (type == "random")
     {
         // randomise vehicle distribution
         std::random_device rd;
@@ -162,7 +201,11 @@ void AssignVehicles(DataModel &data, const int &input_vehicles, std::string type
             std::cout << vehicles[i] << "  ";
         }
         data.num_vehicles = vehicles;
+    } else
+    {
+        data.num_vehicles = RegretInsersionAssign(type, data.distance_matrix,  data.demands, data.vehicle_capacity, data.depot, total_vehicles);
     }
+    
 }
 
 void PrintSolution(const DataModel &data, const std::vector<int> &solution)
@@ -241,6 +284,11 @@ void WriteResults(const DataModel &data, const std::vector<int> &nodes_permutati
     outfile.close();
 }
 
+void OverwriteInitial(const DataModel &data, const std::vector<int> &nodes_permutation, const double run_time, const std::string &file_name)
+{
+    covid19::WriteResults(data, nodes_permutation, run_time, file_name);
+}
+
 void VrpCapacity(const std::string &data_folder, const std::string &file_name, const int round, std::string type)
 {
     std::vector<int64_t> round_costs{};
@@ -251,6 +299,11 @@ void VrpCapacity(const std::string &data_folder, const std::string &file_name, c
     std::string initial_solution_file_url = data_folder + "/initial_solution/" + file_name;
 
     DataModel data;
+
+    std::vector<int> init_solution = ReadResultSolution(initial_solution_file_url);
+    // std::cout << "INIT SOLUTION" << std::endl;
+    // PrintSolution(data, init_solution);
+
     for (size_t i = 0; i < INNER_ROUND; i++)
     {
         clock_t start_time, end_time;
@@ -258,11 +311,6 @@ void VrpCapacity(const std::string &data_folder, const std::string &file_name, c
         data = initPRDataModel(file_url, type);
 
         start_time = clock();
-
-        std::vector<int> init_solution = ReadResultSolution(initial_solution_file_url);
-
-        std::cout << "INIT SOLUTION" << std::endl;
-        PrintSolution(data, init_solution);
 
         std::vector<int> solution = covid19::Vns("cumdistance", init_solution, data.distance_matrix, data.demands, data.vehicle_capacity, data.depot);
 
@@ -294,6 +342,11 @@ void VrpCapacity(const std::string &data_folder, const std::string &file_name, c
     std::string out_file = file_url + "." + std::to_string(round) + "." + std::to_string(min_cost) + ".res";
     covid19::WriteResults(data, round_solutions[min_index], round_time[min_index], out_file);
 
+    int64_t initial_cost = covid19::CalcDistanceCumCost(init_solution, data.distance_matrix, data.depot);
+    if (min_cost < initial_cost)
+    {
+        covid19::OverwriteInitial(data, round_solutions[min_index], round_time[min_index], initial_solution_file_url);
+    }
 }
 
 std::vector<std::string> GetFileNames(std::string type, std::string data_folder)
@@ -373,7 +426,7 @@ int main(int argc, char **argv)
         folder += "lr/";
     }
 
-     covid19::InitialSolutionWithFolder(type, folder);
+    // covid19::InitialSolutionWithFolder(type, folder);
 
     for (size_t i = 0; i < covid19::OUTER_ROUND; i++)
     {

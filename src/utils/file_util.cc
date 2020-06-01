@@ -5,7 +5,7 @@ namespace covid19
 
 const int SCALE = 1000; // to convert float to int, times 1000 as the file contains 3 digits decimal.
 
-std::string trim(std::string &s) 
+std::string& trim(std::string &s) 
 {
     if (s.empty()) 
     {
@@ -640,5 +640,30 @@ std::vector<std::vector<int64_t>> ReadDistancesCSV(const std::string &file_name)
 
     return distances;
 }
+
+// std::vector<std::string> ListFiles(std::string folder)
+// {
+//     std::vector<std::string> files{};
+//     DIR *dirp;
+//     struct dirent *direntp;
+//     dirp = opendir(folder.c_str());
+//     if (dirp != NULL)
+//     {
+//         while (true)
+//         {
+//             direntp = readdir(dirp);
+//             if (direntp == NULL)
+//             {
+//                 break;
+//             }
+//             else if (direntp->d_name[0] != '.')
+//             {
+//                 files.push_back(direntp->d_name);
+//             }
+//         }
+//         closedir(dirp);
+//     }
+//     return files;
+// }
 
 } // namespace covid19

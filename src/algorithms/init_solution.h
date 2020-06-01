@@ -33,6 +33,13 @@ std::vector<int> Greedy (const std::vector<int64_t>& nodes_requirements, int64_t
 std::vector<int> RegretInsersion (const std::string type, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, const std::vector<int>& num_vehicles, const std::vector<int>& depot_indexes);
 
 void RegretInsersionRecur (const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, const std::vector<int>& num_vehicles, const std::vector<int>& depot_indexes, std::vector<std::vector<int>> &current_routes, std::vector<int> &remain_customers);
+
+std::vector<std::vector<std::vector<int64_t>>> CalcRemainCosts(const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, const std::vector<int>& depot_indexes, std::vector<std::vector<int>> &current_routes, std::vector<int> &remain_customers);
+
+std::pair<std::vector<int64_t>, std::vector<std::vector<int>>> CalcRegretValue(const std::vector<std::vector<std::vector<int64_t>>> &remain_costs);
+
+std::vector<int> RegretInsersionAssign (const std::string type, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, const std::vector<int>& depot_indexes, const int &input_vehicles);
+
 } // namespace covid19
 
 

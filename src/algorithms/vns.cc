@@ -200,7 +200,8 @@ namespace covid19
 
         std::random_device rd;
         std::default_random_engine e{rd()};
-        std::uniform_int_distribution<unsigned> u(10, 20);
+        const int tt = (nodes_requirements.size() - depot_indexes.size()) * depot_indexes.size();
+        std::uniform_int_distribution<unsigned> u(3000/tt, 9000/tt);
         int search_better_depth = u(e);
 
         for (int i = iStart; i < iEnd; i++)
