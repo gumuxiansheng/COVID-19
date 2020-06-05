@@ -426,7 +426,7 @@ int main(int argc, char **argv)
         folder += "lr/";
     }
 
-    // covid19::InitialSolutionWithFolder(type, folder);
+    covid19::InitialSolutionWithFolder(type, folder);
 
     for (size_t i = 0; i < covid19::OUTER_ROUND; i++)
     {

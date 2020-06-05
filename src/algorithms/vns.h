@@ -11,65 +11,6 @@
 namespace covid19
 {
 
-/**
- * swap two nodes
- * @param nodes_permutation
- * @param swap_start_index
- * @param swap_end_index
- * @return
- */
-std::vector<int> TwoSwap(const std::vector<int>& nodes_permutation, int swap_start_index, int swap_end_index);
-
-/**
- * two_opt_swap
- * revert the items between start and end(both include).
- *             start  end
- *               +     +
- *               v     v
- *          +----+-----+----+
- *          |1|2|3|4|5|6|7|8|
- *          +---------------+
- *                  |
- *                  v
- *          +---------------+
- *          |1|2|6|5|4|3|7|8|
- *          +---------------+
- *
- * @param nodes_permutation
- * @param swap_start_index
- * @param swap_end_index
- * @return
- */
-std::vector<int> TwoOptSwap(const std::vector<int>& nodes_permutation, int swap_start_index, int swap_end_index);
-
-/**
- * two_h_opt_swap
- * move two nodes to the head and order the remain nodes.
- *            swap_1 swap_2
- *               +     +
- *               v     v
- *          +----+-----+----+
- *          |1|2|3|4|5|6|7|8|
- *          +---------------+
- *                  |
- *                  v
- *          +---------------+
- *          |3|6|4|5|7|8|1|2|
- *          +---------------+
- *
- * @param nodes_permutation
- * @param swap_start_index
- * @param swap_end_index
- * @return
- */
-std::vector<int> TwoHOptSwap(const std::vector<int>& nodes_permutation, int swap_1, int swap_2);
-
-std::vector<int> ArcNodeSwap(const std::vector<int> &nodes_permutation, int swap_1, int swap_2);
-
-std::vector<int> ArcNodeMove(const std::vector<int> &nodes_permutation, int index_1, int index_2);
-
-std::vector<int> RelocationMove(const std::vector<int>& nodes_permutation, int item_index, int insert_index);
-
 std::vector<int> Shaking(const std::vector<int> &nodes_permutation, std::vector<int> (*shakingMethod)(const std::vector<int> &, int, int));
 
 std::vector<std::vector<bool>> NeighbourReduction(const std::vector<std::vector<int64_t>> &distances);
