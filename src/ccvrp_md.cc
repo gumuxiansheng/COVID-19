@@ -19,25 +19,26 @@ namespace covid19
 
 const int16_t INNER_ROUND = 1;
 const int16_t OUTER_ROUND = 1;
+const std::string ASSIGN_VEHICLES_ALG = "uniform_reverse"; // regret, uniform, uniform_random, uniform_reverse, random
 const std::vector<std::string> LR_FILES{
-    "lr01_1.txt",
-    "lr02_1.txt",
-    "lr03_1.txt",
-    "lr04_1.txt",
-    "lr05_1.txt",
-    "lr06_1.txt",
-    "lr07_1.txt",
-    "lr08_1.txt",
+    // "lr01_1.txt",
+    // "lr02_1.txt",
+    // "lr03_1.txt",
+    // "lr04_1.txt",
+    // "lr05_1.txt",
+    // "lr06_1.txt",
+    // "lr07_1.txt",
+    // "lr08_1.txt",
     "lr09_1.txt",
     "lr10_1.txt",
     "lr11_1.txt",
     "lr12_1.txt",
     "lr13_1.txt",
     "lr14_1.txt",
-    "lr15_1.txt",
+    // "lr15_1.txt",
     "lr16_1.txt",
     "lr17_1.txt",
-    "lr18_1.txt"
+    // "lr18_1.txt",
 };
 
 struct DataModel
@@ -94,7 +95,7 @@ DataModel initPRDataModel(const std::string file_url, const std::string type = "
     data.vehicle_capacity = pr_data.capacity;
     data.depot = pr_data.depot_indexes;
 
-    AssignVehicles(data, pr_data.vehicles, "regret");
+    AssignVehicles(data, pr_data.vehicles, ASSIGN_VEHICLES_ALG);
 
     std::cout << std::endl << "initPRDataModel succeed" << std::endl;
 
@@ -383,23 +384,28 @@ std::vector<std::string> GetFileNames(std::string type, std::string data_folder)
     return files;
 }
 
+void InitialSolution(const std::string &type, const std::string &data_folder,  const std::string &file_name)
+{
+    std::string file_url = data_folder + file_name;
+    DataModel data = initPRDataModel(file_url, type);
+    std::vector<int> init_solution = RegretInsersion("cumdistance", data.distance_matrix, data.demands, data.vehicle_capacity, data.num_vehicles, data.depot);
+
+    const char *mkdir_code = ("mkdir " + data_folder + "initial_solution/").c_str();
+    system(mkdir_code);
+
+    std::string out_file = data_folder + "initial_solution/" + file_name;
+
+    std::cout << "WriteResults:" << out_file << std::endl;
+    covid19::WriteResults(data, init_solution, 0, out_file);
+}
+
 void InitialSolutionWithFolder(const std::string& type, const std::string& data_folder)
 {
     auto files = GetFileNames(type, data_folder);
 
     for (auto &&file_name : files)
     {
-        std::string file_url = data_folder + file_name;
-        DataModel data = initPRDataModel(file_url, type);
-        std::vector<int> init_solution = RegretInsersion("cumdistance", data.distance_matrix, data.demands, data.vehicle_capacity, data.num_vehicles, data.depot);
-
-        const char *mkdir_code = ("mkdir " + data_folder + "initial_solution/").c_str();
-        system(mkdir_code);
-
-        std::string out_file = data_folder + "initial_solution/" + file_name;
-
-        std::cout << "WriteResults:" << out_file << std::endl;
-        covid19::WriteResults(data, init_solution, 0, out_file);
+        InitialSolution(type, data_folder, file_name);
     }
 }
 
@@ -426,7 +432,7 @@ int main(int argc, char **argv)
         folder += "lr/";
     }
 
-    covid19::InitialSolutionWithFolder(type, folder);
+    // covid19::InitialSolutionWithFolder(type, folder);
 
     for (size_t i = 0; i < covid19::OUTER_ROUND; i++)
     {

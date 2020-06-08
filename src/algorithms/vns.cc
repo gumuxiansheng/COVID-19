@@ -144,6 +144,65 @@ namespace covid19
         return current_permutation;
     }
 
+    std::vector<int> LocalSearchDepot(const std::string type, const std::vector<int> &permutation, const std::vector<std::vector<int64_t>> &distances, const std::vector<int64_t> &nodes_requirements, int64_t capacity, const std::vector<int> &depot_indexes, int64_t &current_cost, int &count)
+    {
+        // count++;
+
+        std::vector<int64_t> local_search_better_cost{};
+        std::vector<std::vector<int>> local_search_better_permutation{};
+        std::vector<int> current_permutation{permutation};
+        std::vector<int> neighbour;
+
+        int search_better_depth = 1;
+
+        int numRoutes = (permutation.size() - distances.size() + depot_indexes.size()) / 2;
+        int depotSize = depot_indexes.size();
+
+        for (int i = 0; i < numRoutes; i++)
+        {
+            for (int k = 0; k < depotSize; k++)
+            {
+                neighbour = ExchangeDepot(permutation, depot_indexes, i, depot_indexes[k]);
+
+                int64_t neighbour_cost = CalcCost(type, neighbour, distances, depot_indexes);
+
+                if (current_cost > neighbour_cost)
+                {
+                    current_cost = neighbour_cost;
+
+                    local_search_better_cost.push_back(neighbour_cost);
+                    local_search_better_permutation.push_back(neighbour);
+
+                    if (local_search_better_cost.size() == search_better_depth)
+                    { // choose the search_better_depth's better cost
+                        current_permutation = neighbour;
+                        local_search_better_cost.clear();
+                        local_search_better_permutation.clear();
+                        i = i > 0 ? i - 1 : 0;
+                        k = 0;
+                    }
+                    std::cout << "current_cost: " << current_cost << std::endl;
+                    count = 0;
+                }
+            }
+        }
+
+        if (!local_search_better_cost.empty())
+        { // local search may not found enough better solutions as much as search_better_depth, but we should also choose the best solution here.
+            for (size_t i = 0; i < local_search_better_cost.size(); i++)
+            {
+                if (current_cost == local_search_better_cost[i])
+                {
+                    current_permutation = local_search_better_permutation[i];
+                    local_search_better_cost.clear();
+                    local_search_better_permutation.clear();
+                }
+            }
+        }
+
+        return current_permutation;
+    }
+
     std::vector<int> Vns(const std::string type, const std::vector<int> &nodes_permutation, const std::vector<std::vector<int64_t>> &distances, const std::vector<int64_t> &nodes_requirements, int64_t capacity, const std::vector<int> &depot_indexes)
     {
         const int TRAVEL_SIZE = nodes_permutation.size();
@@ -154,7 +213,7 @@ namespace covid19
         int shakeCount = 0;
         std::random_device rd;
         std::default_random_engine e{rd()};
-        std::uniform_int_distribution<unsigned> u(6, 16);
+        std::uniform_int_distribution<unsigned> u(8, 20);
         int max_no_improve = u(e);
         int shake_max_no_improve = u(e);
         int shake_times = u(e);
@@ -176,6 +235,8 @@ namespace covid19
 
             current_permutation = LocalSearch(1, TRAVEL_SIZE - 3, 1, TRAVEL_SIZE - 1, type, current_permutation, distances, nodes_requirements, capacity, depot_indexes, current_cost, count, ArcNodeMove, neighbourReduction);
 
+            // current_permutation = FitDepot(current_permutation, distances, depot_indexes);
+            current_permutation = LocalSearchDepot(type, current_permutation, distances, nodes_requirements, capacity, depot_indexes, current_cost, count);
 
         } while (count <= max_no_improve);
 
@@ -237,6 +298,10 @@ namespace covid19
 
                 shaking = LocalSearch(1, TRAVEL_SIZE - 2, -1, TRAVEL_SIZE - 1, type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count, TwoOptSwap, neighbourReduction);
 
+                // shaking = FitDepot(shaking, distances, depot_indexes);
+                shaking = LocalSearchDepot(type, shaking, distances, nodes_requirements, capacity, depot_indexes, current_cost, count);
+
+
             } while (count <= max_no_improve);
 
             shaking_cost = CalcCost(type, shaking, distances, depot_indexes);
@@ -296,6 +361,8 @@ namespace covid19
 
                 shaking = LocalSearch(1, TRAVEL_SIZE - 3, 1, TRAVEL_SIZE - 1, type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count, ArcNodeSwap, neighbourReduction);
 
+                shaking = FitDepot(shaking, distances, depot_indexes);
+
             } while (count <= max_no_improve);
 
             if (shaking_cost < current_cost)
@@ -304,6 +371,33 @@ namespace covid19
                 current_permutation = shaking;
             }
 
+            current_permutation = FitDepot(current_permutation, distances, depot_indexes);
+
+            std::cout << "STAGE 4: Shake Depot" << std::endl;
+            shaking = ChangeDepot(current_permutation, distances, depot_indexes, CalcDistanceCumCost);
+            do
+            {
+
+                shaking = LocalSearch(1, TRAVEL_SIZE - 3, 1, TRAVEL_SIZE - 1, type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count, ArcNodeMove, neighbourReduction);
+
+                shaking = LocalSearch(1, TRAVEL_SIZE - 2, -1, TRAVEL_SIZE - 1, type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count, TwoOptSwap, neighbourReduction);
+
+                shaking = LocalSearch(1, TRAVEL_SIZE - 2, 1, TRAVEL_SIZE - 1, type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count, RelocationMove, neighbourReduction);
+
+                shaking = LocalSearch(1, TRAVEL_SIZE - 2, -1, TRAVEL_SIZE - 1, type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count, TwoSwap, neighbourReduction);
+
+                shaking = LocalSearch(1, TRAVEL_SIZE - 3, 1, TRAVEL_SIZE - 1, type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count, ArcNodeSwap, neighbourReduction);
+
+                shaking = FitDepot(shaking, distances, depot_indexes);
+
+            } while (count <= max_no_improve);
+
+            if (shaking_cost < current_cost)
+            {
+                current_cost = shaking_cost;
+                current_permutation = shaking;
+            }
+        
         } while (shakeCount <= shake_max_no_improve);
 
         current_permutation = LocalSearch(1, TRAVEL_SIZE - 2, -1, TRAVEL_SIZE - 1, type, current_permutation, distances, nodes_requirements, capacity, depot_indexes, current_cost, count, RelocationMove, neighbourReduction, true);
