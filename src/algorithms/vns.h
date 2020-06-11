@@ -26,7 +26,7 @@ std::vector<int> LocalSearch(int iStart, int iEnd, int kStart, int kEnd, const s
  * @param depot_indexes
  * @return
  */
-std::vector<int> Vns (const std::string type, const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, const std::vector<int>& depot_indexes);
+std::vector<int> Vns (const std::string type, const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, const std::vector<int>& depot_indexes, const int vehicles_num = 35);
 
 /**
  * VNS(Variable Neighborhood Search) for multi depots
@@ -38,7 +38,7 @@ std::vector<int> Vns (const std::string type, const std::vector<int>& nodes_perm
  * @param depot_indexes
  * @return
  */
-std::vector<int> Vns (const std::string type, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, const std::vector<int>& num_vehicles, const std::vector<int>& depot_indexes);
+std::vector<int> VnsGreedy (const std::string type, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, const std::vector<int>& num_vehicles, const std::vector<int>& depot_indexes);
 
 /**
  * VNS(Variable Neighborhood Search) for single depot
@@ -50,7 +50,7 @@ std::vector<int> Vns (const std::string type, const std::vector<std::vector<int6
  * @param depot_index
  * @return
  */
-std::vector<int> Vns (const std::string type, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, int num_vehicles, int depot_index);
+std::vector<int> VnsSingle (const std::string type, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, int num_vehicles, int depot_index);
 
 }
 

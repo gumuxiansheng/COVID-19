@@ -70,6 +70,7 @@ std::vector<int> ArcNodeMove(const std::vector<int> &nodes_permutation, int inde
 
 std::vector<int> RelocationMove(const std::vector<int>& nodes_permutation, int item_index, int insert_index);
 
+static int depotBias{0};
 std::vector<int> ChangeDepot(const std::vector<int> &nodes_permutation, const std::vector<std::vector<int64_t>> &distances, const std::vector<int> &depotIndexes, int64_t (*costCalc)(const std::vector<int> &, const std::vector<std::vector<int64_t>> &, const std::vector<int> &));
 
 std::vector<int> FitDepot(const std::vector<int> &nodes_permutation, const std::vector<std::vector<int64_t>> &distances, const std::vector<int> &depotIndexes);

@@ -9,6 +9,7 @@ namespace covid19
 {
     const static double DEPOT_RATIO_THETA = 0.2;
     const static double DEPOT_INDEX_THETA = 0.2;
+
     std::vector<int> TwoSwap(const std::vector<int> &nodes_permutation, int swap_start_index, int swap_end_index)
     {
         std::vector<int> v{nodes_permutation};
@@ -192,7 +193,7 @@ namespace covid19
 
     std::vector<int> ChangeDepot(const std::vector<int> &nodes_permutation, const std::vector<std::vector<int64_t>> &distances, const std::vector<int> &depotIndexes, int64_t (*costCalc)(const std::vector<int> &, const std::vector<std::vector<int64_t>> &, const std::vector<int> &))
     {
-        std::vector<std::vector<int>> subRoutes = GetSubRoutes(nodes_permutation, depotIndexes);
+        std::vector<std::vector<int>> subRoutes = std::move(GetSubRoutes(nodes_permutation, depotIndexes));
         const int numRoutes = subRoutes.size();
         std::vector<int> routesLength(numRoutes);
         std::vector<int64_t> routesCost(numRoutes);
@@ -248,7 +249,11 @@ namespace covid19
         std::vector<double> depotAverageLenSort{depotAverageLen};
         std::sort(depotAverageLenSort.begin(), depotAverageLenSort.end());
         z = u(e);
-        pickI = std::ceil(std::pow(z, DEPOT_INDEX_THETA) * (depotIndexes.size() - 1));
+        pickI = std::ceil(std::pow(z, DEPOT_INDEX_THETA) * (depotIndexes.size() - 1)) + depotBias;
+        if (pickI >= depotAverageLenSort.size())
+        {
+            return nodes_permutation;
+        }
         double pickIndex = depotAverageLenSort[pickI];
         
         int depotReplace = -1;
@@ -278,7 +283,7 @@ namespace covid19
 
     std::vector<int> FitDepot(const std::vector<int> &nodes_permutation, const std::vector<std::vector<int64_t>> &distances, const std::vector<int> &depotIndexes)
     {
-        std::vector<std::vector<int>> subRoutes = GetSubRoutes(nodes_permutation, depotIndexes);
+        std::vector<std::vector<int>> subRoutes = std::move(GetSubRoutes(nodes_permutation, depotIndexes));
         const int numRoutes = subRoutes.size();
         for (size_t i = 0; i < numRoutes; i++)
         {
@@ -302,7 +307,7 @@ namespace covid19
 
     std::vector<int> ExchangeDepot(const std::vector<int> &nodes_permutation, const std::vector<int> &depotIndexes, const int subRouteNum, const int changeDepot)
     {
-        std::vector<std::vector<int>> subRoutes = GetSubRoutes(nodes_permutation, depotIndexes);
+        std::vector<std::vector<int>> subRoutes = std::move(GetSubRoutes(nodes_permutation, depotIndexes));
         const int numRoutes = subRoutes.size();
         if (subRouteNum > numRoutes)
         {

@@ -19,26 +19,26 @@ namespace covid19
 
 const int16_t INNER_ROUND = 1;
 const int16_t OUTER_ROUND = 1;
-const std::string ASSIGN_VEHICLES_ALG = "uniform_reverse"; // regret, uniform, uniform_random, uniform_reverse, random
+const std::string ASSIGN_VEHICLES_ALG = "regret"; // regret, uniform, uniform_random, uniform_reverse, random
 const std::vector<std::string> LR_FILES{
-    // "lr01_1.txt",
-    // "lr02_1.txt",
-    // "lr03_1.txt",
-    // "lr04_1.txt",
-    // "lr05_1.txt",
-    // "lr06_1.txt",
-    // "lr07_1.txt",
-    // "lr08_1.txt",
+    "lr01_1.txt",
+    "lr02_1.txt",
+    "lr03_1.txt",
+    "lr04_1.txt",
+    "lr05_1.txt",
+    "lr06_1.txt",
+    "lr07_1.txt",
+    "lr08_1.txt",
     "lr09_1.txt",
     "lr10_1.txt",
     "lr11_1.txt",
     "lr12_1.txt",
     "lr13_1.txt",
     "lr14_1.txt",
-    // "lr15_1.txt",
+    "lr15_1.txt",
     "lr16_1.txt",
     "lr17_1.txt",
-    // "lr18_1.txt",
+    "lr18_1.txt",
 };
 
 struct DataModel
@@ -46,6 +46,7 @@ struct DataModel
     std::vector<std::vector<int64_t>> distance_matrix{};
     std::vector<int64_t> demands{};
     int64_t vehicle_capacity{1};
+    int vehicles_num_total{5};
     std::vector<int> num_vehicles{5};
     std::vector<int> depot{0};
 };
@@ -92,6 +93,7 @@ DataModel initPRDataModel(const std::string file_url, const std::string type = "
     }
     data.distance_matrix = std::move(covid19::CalcDistances(pr_data.nodes, DistanceType::euclidean, locx, locy));
     data.demands = std::move(covid19::GetNodesRequirements(pr_data.nodes, locr));
+    data.vehicles_num_total = pr_data.vehicles;
     data.vehicle_capacity = pr_data.capacity;
     data.depot = pr_data.depot_indexes;
 
@@ -313,7 +315,7 @@ void VrpCapacity(const std::string &data_folder, const std::string &file_name, c
 
         start_time = clock();
 
-        std::vector<int> solution = covid19::Vns("cumdistance", init_solution, data.distance_matrix, data.demands, data.vehicle_capacity, data.depot);
+        std::vector<int> solution = covid19::Vns("cumdistance", init_solution, data.distance_matrix, data.demands, data.vehicle_capacity, data.depot, data.vehicles_num_total);
 
         end_time = clock();
 
@@ -432,7 +434,7 @@ int main(int argc, char **argv)
         folder += "lr/";
     }
 
-    // covid19::InitialSolutionWithFolder(type, folder);
+    covid19::InitialSolutionWithFolder(type, folder);
 
     for (size_t i = 0; i < covid19::OUTER_ROUND; i++)
     {
