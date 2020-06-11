@@ -20,6 +20,38 @@ namespace covid19
 const int16_t INNER_ROUND = 1;
 const int16_t OUTER_ROUND = 1;
 const std::string ASSIGN_VEHICLES_ALG = "regret"; // regret, uniform, uniform_random, uniform_reverse, random
+const std::vector<std::string> P_FILES{
+    "p01_1.txt",
+    "p02_1.txt",
+    "p03_1.txt",
+    "p04_1.txt",
+    "p05_1.txt",
+    "p06_1.txt",
+    "p07_1.txt",
+    "p08_1.txt",
+    "p09_1.txt",
+    "p10_1.txt",
+    "p11_1.txt",
+    "p12_1.txt",
+    "p13_1.txt",
+    "p14_1.txt",
+    "p15_1.txt",
+    "p16_1.txt",
+    "p17_1.txt",
+    "p18_1.txt",
+};
+const std::vector<std::string> PR_FILES{
+    "pr01_1.txt",
+    "pr02_1.txt",
+    "pr03_1.txt",
+    "pr04_1.txt",
+    "pr05_1.txt",
+    "pr06_1.txt",
+    "pr07_1.txt",
+    "pr08_1.txt",
+    "pr09_1.txt",
+    "pr10_1.txt",
+};
 const std::vector<std::string> LR_FILES{
     "lr01_1.txt",
     "lr02_1.txt",
@@ -354,36 +386,23 @@ void VrpCapacity(const std::string &data_folder, const std::string &file_name, c
 
 std::vector<std::string> GetFileNames(std::string type, std::string data_folder)
 {
-    int file_num;
-
     if (type == "p")
     {
-        file_num = 18;
+        return P_FILES;
     }
     else if (type == "pr")
     {
-        file_num = 10;
+        return PR_FILES;
     }
     else if (type == "lr")
     {
         return LR_FILES;
-    }
-
-    std::vector<std::string> files{};
-
-    for (size_t i = 1; i < file_num + 1; i++)
-    // for (size_t i = 7; i < 9 + 1; i++)
+    } else
     {
-        if (i == 16 || i == 17)
-        {
-            continue;
-        }
-        std::string item = i < 10 ? "0" + std::to_string(i) : std::to_string(i);
-        
-        files.push_back(type + item + "_1.txt");
+        return {};
     }
+    
 
-    return files;
 }
 
 void InitialSolution(const std::string &type, const std::string &data_folder,  const std::string &file_name)

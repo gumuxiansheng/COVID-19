@@ -14,9 +14,9 @@
 
 namespace covid19
 {
-    const int SHAKE_TIMES = 9; // how many shake times should a shaking method run
+    // const int SHAKE_TIMES = 9; // how many shake times should a shaking method run
     // const int search_better_depth = 10;
-    const int WHILE_NUM = 4;
+    const int WHILE_NUM = 5;
 
     std::vector<int> Shaking(const std::vector<int> &nodes_permutation, std::vector<int> (*shakingMethod)(const std::vector<int> &, int, int))
     {
@@ -163,7 +163,7 @@ namespace covid19
         {
             for (int k = 0; k < depotSize; k++)
             {
-                neighbour = ExchangeDepot(permutation, depot_indexes, i, depot_indexes[k]);
+                neighbour = std::move(ExchangeDepot(permutation, depot_indexes, i, depot_indexes[k]));
 
                 int64_t neighbour_cost = CalcCost(type, neighbour, distances, depot_indexes);
 
@@ -212,16 +212,17 @@ namespace covid19
 
         int count = 0;
         int shakeCount = 0;
-        std::random_device rd;
-        std::default_random_engine e{rd()};
         std::uniform_int_distribution<unsigned> u(6, 14);
-        std::uniform_int_distribution<unsigned> u2(2, std::min(vehicles_num / 2, 4));
+        std::uniform_int_distribution<unsigned> us(6, 16);
+        std::uniform_int_distribution<unsigned> u2(1, std::min(vehicles_num / 2, 10));
         std::uniform_int_distribution<unsigned> shakeMethodU(0, 2);
 
         std::vector<std::vector<bool>> neighbourReduction = std::move(NeighbourReduction(distances));
 
+        std::random_device rd;
+        std::default_random_engine e{rd()};
         int max_no_improve = u(e);
-        int shake_max_no_improve = u(e);
+        int shake_max_no_improve = us(e);
         int shake_times = u2(e);
         std::cout << "STAGE 1: Local Search" << std::endl;
         do
@@ -246,16 +247,10 @@ namespace covid19
         int64_t prior_cost = INT64_MAX;
         while (whileCount < WHILE_NUM)
         {
-            if (current_cost < prior_cost)
-            {
-                whileCount = 0;
-            }
-            whileCount++;
-            prior_cost = current_cost;
             std::cout << "XROUND " << whileCount << std::endl;
 
             max_no_improve = u(e);
-            shake_max_no_improve = u(e);
+            shake_max_no_improve = us(e);
             shake_times = u2(e);
             do
             {
@@ -298,7 +293,7 @@ namespace covid19
                 shake_times = u2(e);
 
                 shaking_cost = std::move(CalcCost(type, shaking, distances, depot_indexes));
-                if (shaking_cost - current_cost > 0.7 * current_cost)
+                if (shaking_cost - current_cost > 0.6 * current_cost)
                 {
                     count++;
                     continue;
@@ -361,7 +356,7 @@ namespace covid19
                 shake_times = u2(e);
 
                 shaking_cost = CalcCost(type, shaking, distances, depot_indexes);
-                if (shaking_cost - current_cost > 0.7 * current_cost)
+                if (shaking_cost - current_cost > 0.5 * current_cost)
                 {
                     count++;
                     continue;
@@ -413,7 +408,7 @@ namespace covid19
 
                         shaking = std::move(LocalSearch(1, TRAVEL_SIZE - 3, 1, TRAVEL_SIZE - 1, type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count, ArcNodeSwap, neighbourReduction));
 
-                        // shaking = LocalSearchDepot(type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count);
+                        shaking = std::move(LocalSearchDepot(type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count));
 
                     } while (count <= max_no_improve);
 
@@ -430,6 +425,13 @@ namespace covid19
                 } while (depotBias < 2);
 
             } while (shakeCount <= shake_max_no_improve);
+
+            if (current_cost < prior_cost)
+            {
+                whileCount = 0;
+            }
+            whileCount++;
+            prior_cost = current_cost;
         }
 
         return current_permutation;
