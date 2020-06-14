@@ -219,7 +219,7 @@ namespace covid19
 
         std::random_device rd;
         std::default_random_engine e{rd()};
-        std::uniform_int_distribution<double> u(0, 1);
+        std::uniform_real_distribution<double> u(0, 1);
 
         // choose route to be replaced
         std::vector<double> routesRatioSort{routesRatio};
@@ -252,7 +252,7 @@ namespace covid19
         pickI = std::ceil(std::pow(z, DEPOT_INDEX_THETA) * (depotIndexes.size() - 1)) + depotBias;
         if (pickI >= depotAverageLenSort.size())
         {
-            return nodes_permutation;
+            pickI = depotAverageLenSort.size() - 1;
         }
         double pickIndex = depotAverageLenSort[pickI];
         

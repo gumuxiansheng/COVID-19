@@ -13,32 +13,81 @@
 #include <random>
 #include <ctime>
 #include <algorithm>
+#include <map>
 
 namespace covid19
 {
 
 const int16_t INNER_ROUND = 1;
-const int16_t OUTER_ROUND = 1;
-const std::string ASSIGN_VEHICLES_ALG = "regret"; // regret, uniform, uniform_random, uniform_reverse, random
+const int16_t OUTER_ROUND = 5;
+const std::string ASSIGN_VEHICLES_ALG = "random"; // regret, uniform, uniform_random, uniform_reverse, random
+const std::map<std::string, int> VEHICLE_NUM_MAP = {
+    // {"p01_1.txt", 11},
+    // {"p02_1.txt", 5},
+    // {"p03_1.txt", 11},
+    // {"p04_1.txt", 15},
+    // {"p05_1.txt", 8},
+    // {"p06_1.txt", 16},
+    // {"p07_1.txt", 16},
+    // {"p08_1.txt", 25},
+    // {"p09_1.txt", 26},
+    // {"p10_1.txt", 26},
+    // {"p11_1.txt", 26},
+    // {"p12_1.txt", 8},
+    // {"p13_1.txt", 9},
+    // {"p14_1.txt", 10},
+    // {"p15_1.txt", 16},
+    // {"p16_1.txt", 17},
+    // {"p17_1.txt", 18},
+    // {"p18_1.txt", 24},
+    // {"pr01_1.txt", 4},
+    // {"pr02_1.txt", 8},
+    // {"pr03_1.txt", 11},
+    // {"pr04_1.txt", 14},
+    // {"pr05_1.txt", 19},
+    // {"pr06_1.txt", 23},
+    // {"pr07_1.txt", 6},
+    // {"pr08_1.txt", 12},
+    // {"pr09_1.txt", 17},
+    // {"pr10_1.txt", 24},
+    // {"lr01_1.txt", 5},
+    // {"lr02_1.txt", 5},
+    // {"lr03_1.txt", 5},
+    // {"lr04_1.txt", 10},
+    // {"lr05_1.txt", 10},
+    // {"lr06_1.txt", 10},
+    // {"lr07_1.txt", 20},
+    // {"lr08_1.txt", 20},
+    // {"lr09_1.txt", 20},
+    // {"lr10_1.txt", 20},
+    // {"lr11_1.txt", 20},
+    // {"lr12_1.txt", 20},
+    // {"lr13_1.txt", 25},
+    // {"lr14_1.txt", 25},
+    // {"lr15_1.txt", 25},
+    // {"lr16_1.txt", 25},
+    // {"lr17_1.txt", 25},
+    // {"lr18_1.txt", 25},
+};
 const std::vector<std::string> P_FILES{
-    "p01_1.txt",
-    "p02_1.txt",
-    "p03_1.txt",
+    // "p01_1.txt",
+    // "p02_1.txt",
+    // "p03_1.txt",
     "p04_1.txt",
-    "p05_1.txt",
-    "p06_1.txt",
-    "p07_1.txt",
-    "p08_1.txt",
-    "p09_1.txt",
-    "p10_1.txt",
-    "p11_1.txt",
-    "p12_1.txt",
-    "p13_1.txt",
-    "p14_1.txt",
-    "p15_1.txt",
-    "p16_1.txt",
-    "p17_1.txt",
-    "p18_1.txt",
+    // "p05_1.txt",
+    // "p06_1.txt",
+    // "p07_1.txt",
+    // "p08_1.txt",
+    // "p09_1.txt",
+    // "p10_1.txt",
+    // "p11_1.txt",
+    // "p12_1.txt",
+    // // "p13_1.txt",
+    // // "p14_1.txt",
+    // "p15_1.txt",
+    // // "p16_1.txt",
+    // // "p17_1.txt",
+    // "p18_1.txt",
 };
 const std::vector<std::string> PR_FILES{
     "pr01_1.txt",
@@ -53,24 +102,24 @@ const std::vector<std::string> PR_FILES{
     "pr10_1.txt",
 };
 const std::vector<std::string> LR_FILES{
-    "lr01_1.txt",
-    "lr02_1.txt",
-    "lr03_1.txt",
-    "lr04_1.txt",
-    "lr05_1.txt",
-    "lr06_1.txt",
-    "lr07_1.txt",
-    "lr08_1.txt",
-    "lr09_1.txt",
+    // "lr01_1.txt",
+    // "lr02_1.txt",
+    // "lr03_1.txt",
+    // "lr04_1.txt",
+    // "lr05_1.txt",
+    // "lr06_1.txt",
+    // "lr07_1.txt",
+    // "lr08_1.txt",
+    // "lr09_1.txt",
     "lr10_1.txt",
-    "lr11_1.txt",
-    "lr12_1.txt",
-    "lr13_1.txt",
-    "lr14_1.txt",
-    "lr15_1.txt",
-    "lr16_1.txt",
-    "lr17_1.txt",
-    "lr18_1.txt",
+    // "lr11_1.txt",
+    // "lr12_1.txt",
+    // "lr13_1.txt",
+    // "lr14_1.txt",
+    // "lr15_1.txt",
+    // "lr16_1.txt",
+    // "lr17_1.txt",
+    // "lr18_1.txt",
 };
 
 struct DataModel
@@ -103,7 +152,7 @@ DataModel initDataModel()
     return data;
 }
 
-DataModel initPRDataModel(const std::string file_url, const std::string type = "p")
+DataModel initPRDataModel(const std::string file_url, const std::string type = "p", const int assign_vehicles = -1)
 {
     DataModel data;
 
@@ -129,7 +178,11 @@ DataModel initPRDataModel(const std::string file_url, const std::string type = "
     data.vehicle_capacity = pr_data.capacity;
     data.depot = pr_data.depot_indexes;
 
-    AssignVehicles(data, pr_data.vehicles, ASSIGN_VEHICLES_ALG);
+    if (assign_vehicles > 0)
+    {
+        data.vehicles_num_total = assign_vehicles;
+    }
+    AssignVehicles(data, data.vehicles_num_total, ASSIGN_VEHICLES_ALG);
 
     std::cout << std::endl << "initPRDataModel succeed" << std::endl;
 
@@ -140,6 +193,7 @@ void AssignVehicles(DataModel &data, const int &input_vehicles, std::string type
 {
     int64_t sum_demands = std::accumulate(data.demands.begin(), data.demands.end(), 0);
     int total_vehicles = std::ceil((float_t)sum_demands / (float_t)data.vehicle_capacity);
+    std::cout << "sum_demands: " << sum_demands << ", total_vehicles: " << total_vehicles << std::endl;
     if (input_vehicles > total_vehicles)
     {
         total_vehicles = input_vehicles;
@@ -238,7 +292,7 @@ void AssignVehicles(DataModel &data, const int &input_vehicles, std::string type
         data.num_vehicles = vehicles;
     } else
     {
-        data.num_vehicles = RegretInsersionAssign(type, data.distance_matrix,  data.demands, data.vehicle_capacity, data.depot, total_vehicles);
+        data.num_vehicles = std::move(RegretInsersionAssign(type, data.distance_matrix,  data.demands, data.vehicle_capacity, data.depot, total_vehicles));
     }
     
 }
@@ -316,6 +370,8 @@ void WriteResults(const DataModel &data, const std::vector<int> &nodes_permutati
 
     outfile << "    RUN TIME= " << run_time;
 
+    outfile << "    TOTAL VEHICLES= " << data.vehicles_num_total;
+
     outfile.close();
 }
 
@@ -343,7 +399,13 @@ void VrpCapacity(const std::string &data_folder, const std::string &file_name, c
     {
         clock_t start_time, end_time;
         std::cout << "Round: " << i << std::endl;
-        data = initPRDataModel(file_url, type);
+        auto vehicle_map_iter = VEHICLE_NUM_MAP.find(file_name);
+        int assign_vehicles = -1;
+        if (vehicle_map_iter != VEHICLE_NUM_MAP.end())
+        {
+            assign_vehicles = vehicle_map_iter->second;
+        }
+        data = initPRDataModel(file_url, type, assign_vehicles);
 
         start_time = clock();
 
@@ -408,7 +470,13 @@ std::vector<std::string> GetFileNames(std::string type, std::string data_folder)
 void InitialSolution(const std::string &type, const std::string &data_folder,  const std::string &file_name)
 {
     std::string file_url = data_folder + file_name;
-    DataModel data = initPRDataModel(file_url, type);
+    auto vehicle_map_iter = VEHICLE_NUM_MAP.find(file_name);
+    int assign_vehicles = -1;
+    if (vehicle_map_iter != VEHICLE_NUM_MAP.end())
+    {
+        assign_vehicles = vehicle_map_iter->second;
+    }
+    DataModel data = initPRDataModel(file_url, type, assign_vehicles);
     std::vector<int> init_solution = RegretInsersion("cumdistance", data.distance_matrix, data.demands, data.vehicle_capacity, data.num_vehicles, data.depot);
 
     const char *mkdir_code = ("mkdir " + data_folder + "initial_solution/").c_str();
@@ -453,10 +521,11 @@ int main(int argc, char **argv)
         folder += "lr/";
     }
 
-    covid19::InitialSolutionWithFolder(type, folder);
+    // covid19::InitialSolutionWithFolder(type, folder);
 
     for (size_t i = 0; i < covid19::OUTER_ROUND; i++)
     {
+        covid19::InitialSolutionWithFolder(type, folder);
         covid19::VrpCapacityWithFolder(type, folder, i);
     }
 

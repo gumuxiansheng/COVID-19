@@ -163,26 +163,7 @@ std::vector<int> RegretInsersion (const std::string type, const std::vector<std:
 
     }
 
-    // std::cout << "Step 1 current_routes" << std::endl;
-    // for (auto depot_route : current_routes)
-    // {
-    //     for (auto depot : depot_route)
-    //     {
-    //         std::cout << depot << "    ";
-    //     }
-    //     std::cout << std::endl;
-    // }
-
     RegretInsersionRecur(distances, nodes_requirements, capacity, num_vehicles, depot_indexes, current_routes, remain_customers);
-
-    // for (auto depot_route : current_routes)
-    // {
-    //     for (auto depot : depot_route)
-    //     {
-    //         std::cout << depot << "    ";
-    //     }
-    //     std::cout << std::endl;
-    // }
 
     for (auto &route : current_routes)
     {
@@ -255,8 +236,15 @@ std::pair<std::vector<int64_t>, std::vector<std::vector<int>>> CalcRegretValue(c
         std::vector<int> min_pos{0, 1}; // position inserted to one route should not insert before the start depot, so here min_pos[1] is one larger than the index in cus_costs
         int64_t min_cost = cus_costs[min_pos[0]][min_pos[1] - 1];
         std::vector<int64_t> costs_for_sort{};
+        int available_routes_num = 0;
+        int last_available_route = 0;
         for (size_t i = 0; i < cus_costs.size(); i++)
         {
+            if (cus_costs[i][0] < INT64_MAX)
+            {
+                available_routes_num++;
+                last_available_route = i;
+            }
             for (size_t j = 0; j < cus_costs[i].size(); j++)
             {
                 if (cus_costs[i][j] < min_cost)
@@ -270,6 +258,10 @@ std::pair<std::vector<int64_t>, std::vector<std::vector<int>>> CalcRegretValue(c
         }
         std::sort(costs_for_sort.begin(), costs_for_sort.end());
         cus_regret = costs_for_sort[2] - costs_for_sort[0];
+        if (available_routes_num < 2)
+        { // some customer have only one route to add in.
+            cus_regret = INT64_MAX;
+        }
         regret_value.push_back(cus_regret);
         min_positions.push_back(min_pos);
     }
@@ -279,15 +271,17 @@ std::pair<std::vector<int64_t>, std::vector<std::vector<int>>> CalcRegretValue(c
 
 void RegretInsersionRecur (const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, const std::vector<int>& num_vehicles, const std::vector<int>& depot_indexes, std::vector<std::vector<int>> &current_routes, std::vector<int> &remain_customers)
 {
-    // std::cout << "current_routes" << std::endl;
-    // for (auto depot_route : current_routes)
-    // {
-    //     for (auto depot : depot_route)
-    //     {
-    //         std::cout << depot << "    ";
-    //     }
-    //     std::cout << std::endl;
-    // }
+    std::cout << "current_routes" << std::endl;
+    for (auto depot_route : current_routes)
+    {
+        int64_t req = 0;
+        for (auto depot : depot_route)
+        {
+            std::cout << depot << "    ";
+            req += nodes_requirements[depot];
+        }
+        std::cout << "requirments: " << req << std::endl;
+    }
 
     if (remain_customers.empty())
     {
@@ -303,7 +297,26 @@ void RegretInsersionRecur (const std::vector<std::vector<int64_t>>& distances, c
     // |35|56|38|  | -- insertion to route 3
     // +-----------+
     //
-    auto remain_costs = CalcRemainCosts(distances, nodes_requirements, capacity, depot_indexes, current_routes, remain_customers);
+    auto remain_costs = std::move(CalcRemainCosts(distances, nodes_requirements, capacity, depot_indexes, current_routes, remain_customers));
+    for (size_t i = 0; i < remain_costs.size(); i++)
+    {
+        if (remain_customers[i] != 15)
+        {
+            continue;
+        }
+        auto x = remain_costs[i];
+        std::cout << "customer: " << remain_customers[i] << std::endl;
+        for (auto &&j : x)
+        {
+            for (auto &&k : j)
+            {
+                std::cout << k << "    ";
+            }
+            std::cout << std::endl;
+        }
+        
+    }
+    
     
     // STEP 3: Calculate regret value
 
@@ -329,9 +342,9 @@ void RegretInsersionRecur (const std::vector<std::vector<int64_t>>& distances, c
     // | 1| 2| -- customer 4's min regret insertion position
     // +-----+
     //
-    auto regretCalcResult = CalcRegretValue(remain_costs);
-    std::vector<int64_t> regret_value{regretCalcResult.first};
-    std::vector<std::vector<int>> min_positions{regretCalcResult.second};
+    auto regretCalcResult = std::move(CalcRegretValue(remain_costs));
+    std::vector<int64_t> regret_value{std::move(regretCalcResult.first)};
+    std::vector<std::vector<int>> min_positions{std::move(regretCalcResult.second)};
     
 
     // STEP 4: choose most regret
@@ -348,6 +361,7 @@ void RegretInsersionRecur (const std::vector<std::vector<int64_t>>& distances, c
 
     int max_regret_customer = remain_customers[max_regret_pointer];
     std::vector<int> max_regret_position = min_positions[max_regret_pointer];
+    std::cout << "max_regret_customer: " << max_regret_customer << ", max_regret_value: " << max_regret_value << std::endl;
 
     current_routes[max_regret_position[0]].insert(current_routes[max_regret_position[0]].begin() + max_regret_position[1], max_regret_customer);
     remain_customers.erase(remain_customers.begin() + max_regret_pointer);
@@ -396,10 +410,10 @@ std::vector<int> RegretInsersionAssign (const std::string type, const std::vecto
     while(CheckVechicleAssign(current_routes, input_vehicles))
     {
         // calc remain cost and regret values
-        auto remain_costs = CalcRemainCosts(distances, nodes_requirements, capacity, depot_indexes, current_routes, remain_customers);
-        auto regretCalcResult = CalcRegretValue(remain_costs);
-        std::vector<int64_t> regret_value{regretCalcResult.first};
-        std::vector<std::vector<int>> min_positions{regretCalcResult.second};
+        auto remain_costs = std::move(CalcRemainCosts(distances, nodes_requirements, capacity, depot_indexes, current_routes, remain_customers));
+        auto regretCalcResult = std::move(CalcRegretValue(remain_costs));
+        std::vector<int64_t> regret_value{std::move(regretCalcResult.first)};
+        std::vector<std::vector<int>> min_positions{std::move(regretCalcResult.second)};
 
         // choose most regret
         int max_regret_pointer = 0;
