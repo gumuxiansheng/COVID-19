@@ -248,7 +248,7 @@ namespace covid19
                 current_permutation = std::move(LocalSearch(1, TRAVEL_SIZE - 3, 1, TRAVEL_SIZE - 1, type, current_permutation, distances, nodes_requirements, capacity, depot_indexes, current_cost, count, ArcNodeMove, neighbourReduction));
 
                 // current_permutation = FitDepot(current_permutation, distances, depot_indexes);
-                // current_permutation = std::move(LocalSearchDepot(type, current_permutation, distances, nodes_requirements, capacity, depot_indexes, current_cost, count));
+                current_permutation = std::move(LocalSearchDepot(type, current_permutation, distances, nodes_requirements, capacity, depot_indexes, current_cost, count));
 
             } while (count <= max_no_improve);
 
@@ -388,7 +388,7 @@ namespace covid19
                     current_permutation = shaking;
                 }
 
-                // current_permutation = std::move(FitDepot(current_permutation, distances, depot_indexes));
+                current_permutation = std::move(FitDepot(current_permutation, distances, depot_indexes));
 
                 std::cout << "STAGE 4: Shake Depot" << std::endl;
                 depotBias = 0;

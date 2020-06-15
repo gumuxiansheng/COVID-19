@@ -18,62 +18,62 @@
 namespace covid19
 {
 
-const int16_t INNER_ROUND = 1;
-const int16_t OUTER_ROUND = 5;
-const std::string ASSIGN_VEHICLES_ALG = "random"; // regret, uniform, uniform_random, uniform_reverse, random
+const int16_t INNER_ROUND = 20;
+const int16_t OUTER_ROUND = 2;
+const std::string ASSIGN_VEHICLES_ALG = "regret"; // regret, uniform, uniform_random, uniform_reverse, random
 const std::map<std::string, int> VEHICLE_NUM_MAP = {
-    // {"p01_1.txt", 11},
-    // {"p02_1.txt", 5},
-    // {"p03_1.txt", 11},
-    // {"p04_1.txt", 15},
-    // {"p05_1.txt", 8},
-    // {"p06_1.txt", 16},
-    // {"p07_1.txt", 16},
-    // {"p08_1.txt", 25},
-    // {"p09_1.txt", 26},
-    // {"p10_1.txt", 26},
-    // {"p11_1.txt", 26},
-    // {"p12_1.txt", 8},
-    // {"p13_1.txt", 9},
-    // {"p14_1.txt", 10},
-    // {"p15_1.txt", 16},
-    // {"p16_1.txt", 17},
-    // {"p17_1.txt", 18},
-    // {"p18_1.txt", 24},
-    // {"pr01_1.txt", 4},
-    // {"pr02_1.txt", 8},
-    // {"pr03_1.txt", 11},
-    // {"pr04_1.txt", 14},
-    // {"pr05_1.txt", 19},
-    // {"pr06_1.txt", 23},
-    // {"pr07_1.txt", 6},
-    // {"pr08_1.txt", 12},
-    // {"pr09_1.txt", 17},
-    // {"pr10_1.txt", 24},
-    // {"lr01_1.txt", 5},
-    // {"lr02_1.txt", 5},
-    // {"lr03_1.txt", 5},
-    // {"lr04_1.txt", 10},
-    // {"lr05_1.txt", 10},
-    // {"lr06_1.txt", 10},
-    // {"lr07_1.txt", 20},
-    // {"lr08_1.txt", 20},
-    // {"lr09_1.txt", 20},
-    // {"lr10_1.txt", 20},
-    // {"lr11_1.txt", 20},
-    // {"lr12_1.txt", 20},
-    // {"lr13_1.txt", 25},
-    // {"lr14_1.txt", 25},
-    // {"lr15_1.txt", 25},
-    // {"lr16_1.txt", 25},
-    // {"lr17_1.txt", 25},
-    // {"lr18_1.txt", 25},
+    {"p01_1.txt", 11},
+    {"p02_1.txt", 5},
+    {"p03_1.txt", 11},
+    {"p04_1.txt", 15},
+    {"p05_1.txt", 8},
+    {"p06_1.txt", 16},
+    {"p07_1.txt", 16},
+    {"p08_1.txt", 25},
+    {"p09_1.txt", 26},
+    {"p10_1.txt", 26},
+    {"p11_1.txt", 26},
+    {"p12_1.txt", 8},
+    {"p13_1.txt", 9},
+    {"p14_1.txt", 10},
+    {"p15_1.txt", 16},
+    {"p16_1.txt", 17},
+    {"p17_1.txt", 18},
+    {"p18_1.txt", 24},
+    {"pr01_1.txt", 4},
+    {"pr02_1.txt", 8},
+    {"pr03_1.txt", 11},
+    {"pr04_1.txt", 14},
+    {"pr05_1.txt", 19},
+    {"pr06_1.txt", 23},
+    {"pr07_1.txt", 6},
+    {"pr08_1.txt", 12},
+    {"pr09_1.txt", 17},
+    {"pr10_1.txt", 24},
+    {"lr01_1.txt", 5},
+    {"lr02_1.txt", 5},
+    {"lr03_1.txt", 5},
+    {"lr04_1.txt", 10},
+    {"lr05_1.txt", 10},
+    {"lr06_1.txt", 10},
+    {"lr07_1.txt", 20},
+    {"lr08_1.txt", 20},
+    {"lr09_1.txt", 20},
+    {"lr10_1.txt", 20},
+    {"lr11_1.txt", 20},
+    {"lr12_1.txt", 20},
+    {"lr13_1.txt", 25},
+    {"lr14_1.txt", 25},
+    {"lr15_1.txt", 25},
+    {"lr16_1.txt", 25},
+    {"lr17_1.txt", 25},
+    {"lr18_1.txt", 25},
 };
 const std::vector<std::string> P_FILES{
     // "p01_1.txt",
-    // "p02_1.txt",
+    "p02_1.txt",
     // "p03_1.txt",
-    "p04_1.txt",
+    // "p04_1.txt",
     // "p05_1.txt",
     // "p06_1.txt",
     // "p07_1.txt",
@@ -478,6 +478,7 @@ void InitialSolution(const std::string &type, const std::string &data_folder,  c
     }
     DataModel data = initPRDataModel(file_url, type, assign_vehicles);
     std::vector<int> init_solution = RegretInsersion("cumdistance", data.distance_matrix, data.demands, data.vehicle_capacity, data.num_vehicles, data.depot);
+    // std::vector<int> init_solution = Greedy(data.demands, data.vehicle_capacity, data.num_vehicles, data.depot);
 
     const char *mkdir_code = ("mkdir " + data_folder + "initial_solution/").c_str();
     system(mkdir_code);
@@ -515,17 +516,17 @@ int main(int argc, char **argv)
     std::cout << "p or pr or lr?" << std::endl;
     std::string type;
     std::cin >> type;
-    std::string folder = "/Users/mikezhu/Dev/CPP/COVID-19/data/demo/";
+    std::string folder = "/Users/mikezhu/Dev/CPP/COVID-19/data/demo2/";
     if (type == "lr")
     {
         folder += "lr/";
     }
 
-    // covid19::InitialSolutionWithFolder(type, folder);
+    covid19::InitialSolutionWithFolder(type, folder);
 
     for (size_t i = 0; i < covid19::OUTER_ROUND; i++)
     {
-        covid19::InitialSolutionWithFolder(type, folder);
+        // covid19::InitialSolutionWithFolder(type, folder);
         covid19::VrpCapacityWithFolder(type, folder, i);
     }
 
