@@ -293,11 +293,11 @@ namespace covid19
                 shake_times = u2(e);
 
                 shaking_cost = std::move(CalcCost(type, shaking, distances, depot_indexes));
-                // if (shaking_cost - current_cost > 0.6 * current_cost)
-                // {
-                //     count++;
-                //     continue;
-                // }
+                if (shaking_cost - current_cost > 0.6 * current_cost)
+                {
+                    count++;
+                    continue;
+                }
 
                 std::cout << "STAGE 2: Local Search" << std::endl;
                 do
@@ -356,11 +356,11 @@ namespace covid19
                 shake_times = u2(e);
 
                 shaking_cost = CalcCost(type, shaking, distances, depot_indexes);
-                // if (shaking_cost - current_cost > 0.5 * current_cost)
-                // {
-                //     count++;
-                //     continue;
-                // }
+                if (shaking_cost - current_cost > 0.5 * current_cost)
+                {
+                    count++;
+                    continue;
+                }
 
                 std::cout << "STAGE 3: Local Search Again" << std::endl;
                 do
@@ -391,38 +391,38 @@ namespace covid19
                 // current_permutation = std::move(FitDepot(current_permutation, distances, depot_indexes));
 
                 std::cout << "STAGE 4: Shake Depot" << std::endl;
-                // depotBias = 0;
-                // do
-                // {
-                //     shaking = std::move(ChangeDepot(current_permutation, distances, depot_indexes, CalcDistanceCumCost));
-                //     do
-                //     {
+                depotBias = 0;
+                do
+                {
+                    shaking = std::move(ChangeDepot(current_permutation, distances, depot_indexes, CalcDistanceCumCost));
+                    do
+                    {
 
-                //         shaking = std::move(LocalSearch(1, TRAVEL_SIZE - 3, 1, TRAVEL_SIZE - 1, type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count, ArcNodeMove, neighbourReduction));
+                        shaking = std::move(LocalSearch(1, TRAVEL_SIZE - 3, 1, TRAVEL_SIZE - 1, type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count, ArcNodeMove, neighbourReduction));
 
-                //         shaking = std::move(LocalSearch(1, TRAVEL_SIZE - 2, -1, TRAVEL_SIZE - 1, type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count, TwoOptSwap, neighbourReduction));
+                        shaking = std::move(LocalSearch(1, TRAVEL_SIZE - 2, -1, TRAVEL_SIZE - 1, type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count, TwoOptSwap, neighbourReduction));
 
-                //         shaking = std::move(LocalSearch(1, TRAVEL_SIZE - 2, 1, TRAVEL_SIZE - 1, type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count, RelocationMove, neighbourReduction));
+                        shaking = std::move(LocalSearch(1, TRAVEL_SIZE - 2, 1, TRAVEL_SIZE - 1, type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count, RelocationMove, neighbourReduction));
 
-                //         shaking = std::move(LocalSearch(1, TRAVEL_SIZE - 2, -1, TRAVEL_SIZE - 1, type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count, TwoSwap, neighbourReduction));
+                        shaking = std::move(LocalSearch(1, TRAVEL_SIZE - 2, -1, TRAVEL_SIZE - 1, type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count, TwoSwap, neighbourReduction));
 
-                //         shaking = std::move(LocalSearch(1, TRAVEL_SIZE - 3, 1, TRAVEL_SIZE - 1, type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count, ArcNodeSwap, neighbourReduction));
+                        shaking = std::move(LocalSearch(1, TRAVEL_SIZE - 3, 1, TRAVEL_SIZE - 1, type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count, ArcNodeSwap, neighbourReduction));
 
-                //         shaking = std::move(LocalSearchDepot(type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count));
+                        shaking = std::move(LocalSearchDepot(type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count));
 
-                //     } while (count <= max_no_improve);
+                    } while (count <= max_no_improve);
 
-                //     if (shaking_cost < current_cost)
-                //     {
-                //         current_cost = shaking_cost;
-                //         current_permutation = shaking;
-                //         break;
-                //     }
-                //     else
-                //     {
-                //         depotBias++;
-                //     }
-                // } while (depotBias < 3);
+                    if (shaking_cost < current_cost)
+                    {
+                        current_cost = shaking_cost;
+                        current_permutation = shaking;
+                        break;
+                    }
+                    else
+                    {
+                        depotBias++;
+                    }
+                } while (depotBias < 3);
 
             } while (shakeCount <= shake_max_no_improve);
 
