@@ -18,8 +18,8 @@
 namespace covid19
 {
 
-const int16_t INNER_ROUND = 20;
-const int16_t OUTER_ROUND = 2;
+const int16_t INNER_ROUND = 10;
+const int16_t OUTER_ROUND = 3;
 const std::string ASSIGN_VEHICLES_ALG = "regret"; // regret, uniform, uniform_random, uniform_reverse, random
 const std::map<std::string, int> VEHICLE_NUM_MAP = {
     {"p01_1.txt", 11},
@@ -40,6 +40,11 @@ const std::map<std::string, int> VEHICLE_NUM_MAP = {
     {"p16_1.txt", 17},
     {"p17_1.txt", 18},
     {"p18_1.txt", 24},
+    {"p19_1.txt", 25},
+    {"p20_1.txt", 26},
+    {"p21_1.txt", 34},
+    {"p22_1.txt", 35},
+    {"p23_1.txt", 36},
     {"pr01_1.txt", 4},
     {"pr02_1.txt", 8},
     {"pr03_1.txt", 11},
@@ -71,7 +76,7 @@ const std::map<std::string, int> VEHICLE_NUM_MAP = {
 };
 const std::vector<std::string> P_FILES{
     // "p01_1.txt",
-    "p02_1.txt",
+    // "p02_1.txt",
     // "p03_1.txt",
     // "p04_1.txt",
     // "p05_1.txt",
@@ -82,20 +87,25 @@ const std::vector<std::string> P_FILES{
     // "p10_1.txt",
     // "p11_1.txt",
     // "p12_1.txt",
-    // // "p13_1.txt",
-    // // "p14_1.txt",
+    // "p13_1.txt",
+    // "p14_1.txt",
     // "p15_1.txt",
-    // // "p16_1.txt",
-    // // "p17_1.txt",
+    // "p16_1.txt",
+    // "p17_1.txt",
     // "p18_1.txt",
+    // "p19_1.txt",
+    // "p20_1.txt",
+    //  "p21_1.txt",
+    // "p22_1.txt",
+   "p23_1.txt",
 };
 const std::vector<std::string> PR_FILES{
-    "pr01_1.txt",
-    "pr02_1.txt",
-    "pr03_1.txt",
-    "pr04_1.txt",
-    "pr05_1.txt",
-    "pr06_1.txt",
+    // "pr01_1.txt",
+    // "pr02_1.txt",
+    // "pr03_1.txt",
+    // "pr04_1.txt",
+    // "pr05_1.txt",
+    // "pr06_1.txt",
     "pr07_1.txt",
     "pr08_1.txt",
     "pr09_1.txt",
@@ -522,7 +532,7 @@ int main(int argc, char **argv)
         folder += "lr/";
     }
 
-    covid19::InitialSolutionWithFolder(type, folder);
+    // covid19::InitialSolutionWithFolder(type, folder);
 
     for (size_t i = 0; i < covid19::OUTER_ROUND; i++)
     {

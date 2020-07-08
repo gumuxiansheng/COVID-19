@@ -16,7 +16,7 @@ namespace covid19
 {
     // const int SHAKE_TIMES = 9; // how many shake times should a shaking method run
     // const int search_better_depth = 10;
-    const int WHILE_NUM = 16;
+    const int WHILE_NUM = 10;
 
     std::vector<int> Shaking(const std::vector<int> &nodes_permutation, std::vector<int> (*shakingMethod)(const std::vector<int> &, int, int))
     {
@@ -37,7 +37,7 @@ namespace covid19
         {
             std::vector<int64_t> sort_distance{distances[i]};
             std::sort(sort_distance.begin(), sort_distance.end());
-            int64_t reduction_anchor = sort_distance[sort_distance.size() * 0.08 + 1];
+            int64_t reduction_anchor = sort_distance[sort_distance.size() * 0.02 + 1];
 
             std::vector<bool> nrx{};
             for (auto &&item : distances[i])
@@ -214,8 +214,8 @@ namespace covid19
         int count = 0;
         int shakeCount = 0;
         std::uniform_int_distribution<unsigned> u(6, 14);
-        std::uniform_int_distribution<unsigned> us(6, 10);
-        std::uniform_int_distribution<unsigned> u2(2, std::min(vehicles_num / 2, 5));
+        std::uniform_int_distribution<unsigned> us(6, 18);
+        std::uniform_int_distribution<unsigned> u2(2, std::min(vehicles_num / 2, 10));
         std::uniform_int_distribution<unsigned> shakeMethodU(0, 2);
 
         std::vector<std::vector<bool>> neighbourReduction = std::move(NeighbourReduction(distances));
@@ -293,11 +293,11 @@ namespace covid19
                 shake_times = u2(e);
 
                 shaking_cost = std::move(CalcCost(type, shaking, distances, depot_indexes));
-                if (shaking_cost - current_cost > 0.6 * current_cost)
-                {
-                    count++;
-                    continue;
-                }
+                // if (shaking_cost - current_cost > 0.6 * current_cost)
+                // {
+                //     count++;
+                //     continue;
+                // }
 
                 std::cout << "STAGE 2: Local Search" << std::endl;
                 do
@@ -356,11 +356,11 @@ namespace covid19
                 shake_times = u2(e);
 
                 shaking_cost = CalcCost(type, shaking, distances, depot_indexes);
-                if (shaking_cost - current_cost > 0.5 * current_cost)
-                {
-                    count++;
-                    continue;
-                }
+                // if (shaking_cost - current_cost > 0.5 * current_cost)
+                // {
+                //     count++;
+                //     continue;
+                // }
 
                 std::cout << "STAGE 3: Local Search Again" << std::endl;
                 do

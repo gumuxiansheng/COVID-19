@@ -271,17 +271,17 @@ std::pair<std::vector<int64_t>, std::vector<std::vector<int>>> CalcRegretValue(c
 
 void RegretInsersionRecur (const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, const std::vector<int>& num_vehicles, const std::vector<int>& depot_indexes, std::vector<std::vector<int>> &current_routes, std::vector<int> &remain_customers)
 {
-    std::cout << "current_routes" << std::endl;
-    for (auto depot_route : current_routes)
-    {
-        int64_t req = 0;
-        for (auto depot : depot_route)
-        {
-            std::cout << depot << "    ";
-            req += nodes_requirements[depot];
-        }
-        std::cout << "requirments: " << req << std::endl;
-    }
+    // std::cout << "current_routes" << std::endl;
+    // for (auto depot_route : current_routes)
+    // {
+    //     int64_t req = 0;
+    //     for (auto depot : depot_route)
+    //     {
+    //         std::cout << depot << "    ";
+    //         req += nodes_requirements[depot];
+    //     }
+    //     std::cout << "requirments: " << req << std::endl;
+    // }
 
     if (remain_customers.empty())
     {
@@ -361,7 +361,7 @@ void RegretInsersionRecur (const std::vector<std::vector<int64_t>>& distances, c
 
     int max_regret_customer = remain_customers[max_regret_pointer];
     std::vector<int> max_regret_position = min_positions[max_regret_pointer];
-    std::cout << "max_regret_customer: " << max_regret_customer << ", max_regret_value: " << max_regret_value << std::endl;
+    // std::cout << "max_regret_customer: " << max_regret_customer << ", max_regret_value: " << max_regret_value << std::endl;
 
     current_routes[max_regret_position[0]].insert(current_routes[max_regret_position[0]].begin() + max_regret_position[1], max_regret_customer);
     remain_customers.erase(remain_customers.begin() + max_regret_pointer);

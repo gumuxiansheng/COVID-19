@@ -185,6 +185,8 @@ PRDataModel ReadPR(const std::string &file_name)
 
     std::cout << "Read in ReadCordeau" << std::endl;
     std::vector<std::vector<int64_t>> nodes;
+    int node_size{0};
+    int depot_size{0};
     std::fstream read_in_file;
     read_in_file.open(file_name, std::ios::in);
     if (read_in_file.is_open())
@@ -211,6 +213,12 @@ PRDataModel ReadPR(const std::string &file_name)
                         if (++space_count == 1)
                         {
                             reData.vehicles = std::stoi(loc_t_s);
+                        } else if (space_count == 2)
+                        {
+                            node_size = std::stoi(loc_t_s);
+                        } else if (space_count == 3)
+                        {
+                            depot_size = std::stoi(loc_t_s);
                         } else if (space_count == 5)
                         {
                             if (i == line_str.size() - 1)
@@ -249,10 +257,14 @@ PRDataModel ReadPR(const std::string &file_name)
                         loc_t_s.append(1, line_str[i]);
                     }
                 }
-                if (loc_vec.size() == 3)
+                if (loc_vec[0] > node_size)
                 { // it's depot
-                    loc_vec.push_back(0);
-                    loc_vec.push_back(0); // make the depot has the same colums with other nodes
+                    if (loc_vec.size() == 3)
+                    { // it's depot
+                        loc_vec.push_back(0);
+                        loc_vec.push_back(0); // make the depot has the same colums with other nodes
+                    }
+
                     reData.depot_indexes.push_back(nodes.size());
                 }
                 nodes.push_back(loc_vec);
@@ -289,6 +301,8 @@ PRDataModel ReadPRFloat(const std::string &file_name)
 
     std::cout << "Read in ReadCordeau: " << file_name << std::endl;
     std::vector<std::vector<int64_t>> nodes;
+    int node_size{0};
+    int depot_size{0};
     std::fstream read_in_file;
     read_in_file.open(file_name, std::ios::in);
     if (read_in_file.is_open())
@@ -315,7 +329,13 @@ PRDataModel ReadPRFloat(const std::string &file_name)
                         if (++space_count == 1)
                         {
                             reData.vehicles = std::stoi(loc_t_s);
-                        } else if (space_count == 5)
+                        } else if (space_count == 2)
+                        {
+                            node_size = std::stoi(loc_t_s);
+                        } else if (space_count == 3)
+                        {
+                            depot_size = std::stoi(loc_t_s);
+                        }  else if (space_count == 5)
                         {
                             if (i == line_str.size() - 1)
                             {
@@ -359,10 +379,14 @@ PRDataModel ReadPRFloat(const std::string &file_name)
                         loc_t_s.append(1, line_str[i]);
                     }
                 }
-                if (loc_vec.size() == 3)
+                if (loc_vec[0] > node_size)
                 { // it's depot
-                    loc_vec.push_back(0);
-                    loc_vec.push_back(0); // make the depot has the same colums with other nodes
+                    if (loc_vec.size() == 3)
+                    { // it's depot
+                        loc_vec.push_back(0);
+                        loc_vec.push_back(0); // make the depot has the same colums with other nodes
+                    }
+
                     reData.depot_indexes.push_back(nodes.size());
                 }
                 nodes.push_back(loc_vec);
