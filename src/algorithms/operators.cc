@@ -281,6 +281,72 @@ namespace covid19
 
     }
 
+    std::vector<int> ChangeDepotGuided(const std::vector<int> &nodes_permutation, const std::vector<std::vector<int64_t>> &distances, const std::vector<int> &depotIndexes, std::vector<std::vector<int>> potentialDepotsList, std::vector<std::vector<bool>> potentialDepots, int64_t (*costCalc)(const std::vector<int> &, const std::vector<std::vector<int64_t>> &, const std::vector<int> &))
+    {
+        std::vector<std::vector<int>> subRoutes = std::move(GetSubRoutes(nodes_permutation, depotIndexes));
+        const int numRoutes = subRoutes.size();
+
+        // choose route to be replaced
+        int maxNonBorderCount = 0;
+        int maxNonBorderIndex = 0;
+        std::vector<int> nonBorderNode{};
+        for (size_t i = 0; i < numRoutes; i++)
+        {
+            std::vector<int> nonBorderNodex{};
+            int nonBorderCount = 0;
+            for (auto &&node : subRoutes[i])
+            {
+                if (potentialDepotsList[node].size() > 1)
+                {
+                    nonBorderCount++;
+                    nonBorderNodex.push_back(node);
+                }
+            }
+            if (nonBorderCount > maxNonBorderCount)
+            {
+                maxNonBorderCount = nonBorderCount;
+                maxNonBorderIndex = i;
+                nonBorderNode = std::move(nonBorderNodex);
+            }
+        }
+
+        // choose deopt to replace
+        std::vector<int> depotGrade(distances.size());
+        for (auto &&bn : nonBorderNode)
+        {
+            int maxGradex = potentialDepotsList[bn].size();
+            for (auto &&pdepot : potentialDepotsList[bn])
+            {
+                depotGrade[pdepot] += maxGradex;
+                maxGradex--;
+            }
+        }
+        int currentDepot = subRoutes[maxNonBorderIndex][0];
+        int maxDepotGrade = 0;
+        int maxDepotGradeIndex = 0;
+        for (size_t i = 0; i < depotGrade.size(); i++)
+        {
+            if (i == currentDepot)
+            {
+                continue;
+            }
+            int dgrade = depotGrade[i];
+            if (maxDepotGrade < dgrade)
+            {
+                maxDepotGrade = dgrade;
+                maxDepotGradeIndex = i;
+            }
+        }
+        std::cout << "ChangeDepotGuided: " << currentDepot << "; " << maxDepotGradeIndex << std::endl;
+
+        // replace
+        *subRoutes[maxNonBorderIndex].begin() = maxDepotGradeIndex;
+        *(subRoutes[maxNonBorderIndex].end() - 1) = maxDepotGradeIndex;
+        
+        return RevertSubroutes(subRoutes);
+
+    }
+
     std::vector<int> FitDepot(const std::vector<int> &nodes_permutation, const std::vector<std::vector<int64_t>> &distances, const std::vector<int> &depotIndexes)
     {
         std::vector<std::vector<int>> subRoutes = std::move(GetSubRoutes(nodes_permutation, depotIndexes));

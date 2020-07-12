@@ -18,8 +18,8 @@
 namespace covid19
 {
 
-const int16_t INNER_ROUND = 10;
-const int16_t OUTER_ROUND = 3;
+const int16_t INNER_ROUND = 1;
+const int16_t OUTER_ROUND = 1;
 const std::string ASSIGN_VEHICLES_ALG = "regret"; // regret, uniform, uniform_random, uniform_reverse, random
 const std::map<std::string, int> VEHICLE_NUM_MAP = {
     {"p01_1.txt", 11},
@@ -282,7 +282,6 @@ void AssignVehicles(DataModel &data, const int &input_vehicles, std::string type
         std::sort(vehicles_splits.begin(), vehicles_splits.end());
 
         std::vector<int> vehicles{};
-        std::cout << "vehicles: ";
         for (size_t i = 0; i < data.depot.size(); i++)
         {
             if (i == 0)
@@ -297,7 +296,6 @@ void AssignVehicles(DataModel &data, const int &input_vehicles, std::string type
             {
                 vehicles.push_back(vehicles_splits[i] - vehicles_splits[i - 1]);
             }
-            std::cout << vehicles[i] << "  ";
         }
         data.num_vehicles = vehicles;
     } else
@@ -532,7 +530,7 @@ int main(int argc, char **argv)
         folder += "lr/";
     }
 
-    // covid19::InitialSolutionWithFolder(type, folder);
+    covid19::InitialSolutionWithFolder(type, folder);
 
     for (size_t i = 0; i < covid19::OUTER_ROUND; i++)
     {
