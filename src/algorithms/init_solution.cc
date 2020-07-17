@@ -298,24 +298,24 @@ void RegretInsersionRecur (const std::vector<std::vector<int64_t>>& distances, c
     // +-----------+
     //
     auto remain_costs = std::move(CalcRemainCosts(distances, nodes_requirements, capacity, depot_indexes, current_routes, remain_customers));
-    for (size_t i = 0; i < remain_costs.size(); i++)
-    {
-        if (remain_customers[i] != 15)
-        {
-            continue;
-        }
-        auto x = remain_costs[i];
-        std::cout << "customer: " << remain_customers[i] << std::endl;
-        for (auto &&j : x)
-        {
-            for (auto &&k : j)
-            {
-                std::cout << k << "    ";
-            }
-            std::cout << std::endl;
-        }
+    // for (size_t i = 0; i < remain_costs.size(); i++)
+    // {
+    //     if (remain_customers[i] != 15)
+    //     {
+    //         continue;
+    //     }
+    //     auto x = remain_costs[i];
+    //     std::cout << "customer: " << remain_customers[i] << std::endl;
+    //     for (auto &&j : x)
+    //     {
+    //         for (auto &&k : j)
+    //         {
+    //             std::cout << k << "    ";
+    //         }
+    //         std::cout << std::endl;
+    //     }
         
-    }
+    // }
     
     
     // STEP 3: Calculate regret value
