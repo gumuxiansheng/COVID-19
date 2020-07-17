@@ -97,7 +97,7 @@ namespace covid19
         return true;
     }
 
-    std::vector<int> Shaking(const std::vector<int> &nodes_permutation, const std::vector<std::vector<bool>> &potential_depots, const std::vector<int> &depot_indexes, std::vector<int> (*shakingMethod)(const std::vector<int> &, int, int))
+    std::vector<int> Shaking(const std::vector<int> &nodes_permutation, const std::vector<std::vector<bool>> &potential_depots, const std::vector<std::vector<int>> &potentialDepotsList, const std::vector<int> &depot_indexes, std::vector<int> (*shakingMethod)(const std::vector<int> &, int, int))
     {
         std::random_device rd;
         std::default_random_engine e{rd()};
@@ -108,7 +108,7 @@ namespace covid19
 
         int max_while = 10;
         int count = 0;
-        while (!CheckShaking(nodes_permutation, potential_depots, depot_indexes, index1, index2) && (count++ < max_while))
+        while (!CheckShakingGuided(nodes_permutation, potential_depots, depot_indexes, index1, index2, potentialDepotsList) && (count++ < max_while))
         {
             index1 = u(e);
             index2 = u(e);
@@ -117,7 +117,7 @@ namespace covid19
         return shakingMethod(nodes_permutation, index1, index2);
     }
 
-    std::vector<std::vector<bool>> NeighbourReduction(const std::vector<std::vector<int64_t>> &distances)
+    std::vector<std::vector<bool>> NeighbourReduction(const std::vector<std::vector<int64_t>> &distances, const std::vector<std::vector<bool>> &potentialDepots)
     {
         std::vector<std::vector<bool>> neighbourReduction{};
         for (size_t i = 0; i < distances.size(); i++)
@@ -127,9 +127,10 @@ namespace covid19
             int64_t reduction_anchor = sort_distance[sort_distance.size() * 0.02 + 1];
 
             std::vector<bool> nrx{};
-            for (auto &&item : distances[i])
+            for (size_t j = 0; j < distances[i].size(); j++)
             {
-                nrx.push_back(item <= reduction_anchor);
+                auto item = distances[i][j];
+                nrx.push_back(item <= reduction_anchor || potentialDepots[i][j]);
             }
 
             neighbourReduction.push_back(nrx);
@@ -381,10 +382,10 @@ namespace covid19
         std::uniform_int_distribution<unsigned> u2(2, std::min(vehicles_num / 2, 10));
         std::uniform_int_distribution<unsigned> shakeMethodU(0, 2);
 
-        std::vector<std::vector<bool>> neighbourReduction = std::move(NeighbourReduction(distances));
         std::vector<std::vector<int>> potentialDepotsList(distances.size());
         std::vector<std::vector<bool>> potentialDepots = std::move(PotentialDepots(distances, depot_indexes, potentialDepotsList));
-
+        std::vector<std::vector<bool>> neighbourReduction = std::move(NeighbourReduction(distances, potentialDepots));
+        
 
         int whileCount = 0;
         int64_t prior_cost = current_cost;
@@ -449,7 +450,7 @@ namespace covid19
                     while (true)
                     {
                         std::vector<int> priorShaking{shaking};
-                        shaking = std::move(Shaking(shaking, potentialDepots, depot_indexes, shakingMethod));
+                        shaking = std::move(Shaking(shaking, potentialDepots, potentialDepotsList, depot_indexes, shakingMethod));
                         if (covid19::CheckMultiDepotRequirements(shaking, nodes_requirements, capacity, depot_indexes))
                         {
                             break;
@@ -517,7 +518,7 @@ namespace covid19
                     while (true)
                     {
                         std::vector<int> priorShaking{shaking};
-                        shaking = std::move(Shaking(shaking, potentialDepots, depot_indexes, shakingMethod));
+                        shaking = std::move(Shaking(shaking, potentialDepots, potentialDepotsList, depot_indexes, shakingMethod));
                         if (covid19::CheckMultiDepotRequirements(shaking, nodes_requirements, capacity, depot_indexes))
                         {
                             break;
