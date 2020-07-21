@@ -16,7 +16,7 @@ namespace covid19
 {
     // const int SHAKE_TIMES = 9; // how many shake times should a shaking method run
     // const int search_better_depth = 10;
-    const int WHILE_NUM = 8;
+    const int WHILE_NUM = 1;
 
     bool CheckShaking(const std::vector<int> &nodes_permutation, const std::vector<std::vector<bool>> &potential_depots, const std::vector<int> &depot_indexes, int index1, int index2)
     {
@@ -124,7 +124,7 @@ namespace covid19
         {
             std::vector<int64_t> sort_distance{distances[i]};
             std::sort(sort_distance.begin(), sort_distance.end());
-            int64_t reduction_anchor = sort_distance[sort_distance.size() * 0.02 + 1];
+            int64_t reduction_anchor = sort_distance[sort_distance.size() * 0.05 + 1];
 
             std::vector<bool> nrx{};
             for (size_t j = 0; j < distances[i].size(); j++)

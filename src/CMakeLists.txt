@@ -5,7 +5,7 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/..)
 foreach(EXECUTABLE
   ccvrp_md
   ccvrp_multi_depot_raw)
-  add_executable(${EXECUTABLE} ${EXECUTABLE}.cc utils/file_util.cc utils/distance_util.cc utils/requirements_util.cc utils/vector_help.cc algorithms/vns.cc algorithms/vns.h algorithms/init_solution.cc algorithms/init_solution.h algorithms/cost.cc algorithms/cost.h algorithms/operators.cc algorithms/operators.h)
+  add_executable(${EXECUTABLE} ${EXECUTABLE}.cc utils/file_util.cc utils/distance_util.cc utils/requirements_util.cc utils/vector_help.cc algorithms/vns.cc algorithms/vns.h algorithms/init_solution.cc algorithms/init_solution.h algorithms/cost.cc algorithms/cost.h algorithms/operators.cc algorithms/operators.h utils/plot.h utils/plot.cc)
   target_include_directories(${EXECUTABLE} PUBLIC ${PARENT_SOURCE_DIR})
   target_compile_features(${EXECUTABLE} PRIVATE cxx_std_11)
 endforeach()

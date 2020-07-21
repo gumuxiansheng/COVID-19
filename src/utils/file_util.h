@@ -38,6 +38,10 @@ std::vector<int64_t> GetNodesRequirements(std::vector<std::vector<int64_t>> node
 
 std::vector<std::vector<int64_t>> ReadDistancesCSV(const std::string &file_name);
 
+std::vector<int64_t> ReadRequirementsCSV(const std::string &file_name);
+
+std::vector<std::vector<int64_t>> ReadLocationsCSV(const std::string &file_name);
+
 // std::vector<std::string> ListFiles(std::string folder);
 
 } // namespace covid19

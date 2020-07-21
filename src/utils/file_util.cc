@@ -530,7 +530,7 @@ PRDataModel ReadLRFloat(const std::string &file_name)
     }
 
     std::cout << "Nodes:" << std::endl;
-    for (auto node : nodes)
+    for (auto &&node : nodes)
     {
         for (auto item : node)
         {
@@ -632,19 +632,26 @@ std::vector<std::vector<int64_t>> ReadDistancesCSV(const std::string &file_name)
         int line_index = 0;
         while (getline(read_in_file, line_str))
         {
-            if (line_index == 0)
+            if (++line_index == 1)
             {
                 continue; // ignore the head
             }
 
             std::vector<int64_t> loc_vec;
             std::string loc_t_s;
-            for (size_t i = 1; i < line_str.size() + 1; i++)
-            { // ignore the index
+            int commaCount = 0;
+            for (size_t i = 0; i < line_str.size() + 1; i++)
+            {
                 if (i == line_str.size() || line_str[i] == ',')
                 {
+                    if (++commaCount == 1)
+                    {
+                        loc_t_s = "";
+                        continue;
+                    }
                     loc_vec.push_back(std::stoi(loc_t_s));
                     loc_t_s = "";
+
                 }
                 else
                 {
@@ -665,29 +672,112 @@ std::vector<std::vector<int64_t>> ReadDistancesCSV(const std::string &file_name)
     return distances;
 }
 
-// std::vector<std::string> ListFiles(std::string folder)
-// {
-//     std::vector<std::string> files{};
-//     DIR *dirp;
-//     struct dirent *direntp;
-//     dirp = opendir(folder.c_str());
-//     if (dirp != NULL)
-//     {
-//         while (true)
-//         {
-//             direntp = readdir(dirp);
-//             if (direntp == NULL)
-//             {
-//                 break;
-//             }
-//             else if (direntp->d_name[0] != '.')
-//             {
-//                 files.push_back(direntp->d_name);
-//             }
-//         }
-//         closedir(dirp);
-//     }
-//     return files;
-// }
+std::vector<int64_t> ReadRequirementsCSV(const std::string &file_name)
+{
+
+    std::cout << "Read in CSV" << std::endl;
+    std::vector<int64_t> requirements;
+    std::fstream read_in_file;
+    read_in_file.open(file_name, std::ios::in);
+    if (read_in_file.is_open())
+    { //checking whether the file is open
+        std::string line_str;
+        int line_index = 0;
+        while (getline(read_in_file, line_str))
+        {
+            std::string loc_t_s;
+            for (size_t i = 0; i < line_str.size() + 1; i++)
+            {
+                if (line_str[i] == ',') 
+                {
+                    loc_t_s = "";
+                } else if (i == line_str.size())
+                {
+                    requirements.push_back(std::stoi(loc_t_s));
+                    
+                }
+                else
+                {
+                    loc_t_s.append(1, line_str[i]);
+                }
+            }
+
+            line_index++;
+        }
+        read_in_file.close(); //close the file object.
+    }
+    else
+    {
+        std::cerr << "CSV read failed." << std::endl;
+    }
+
+    return requirements;
+}
+
+
+std::vector<std::vector<int64_t>> ReadLocationsCSV(const std::string &file_name)
+{
+
+    std::cout << "Read in CSV" << std::endl;
+    std::vector<std::vector<int64_t>> locations;
+    std::fstream read_in_file;
+    read_in_file.open(file_name, std::ios::in);
+    if (read_in_file.is_open())
+    { //checking whether the file is open
+        std::string line_str;
+        int line_index = 0;
+        while (getline(read_in_file, line_str))
+        {
+            if (++line_index == 1)
+            {
+                continue; // ignore the head
+            }
+
+            std::vector<int64_t> loc_vec;
+            std::string loc_t_s;
+            int commaCount = 0;
+            int digitInt = 0;
+            for (size_t i = 0; i < line_str.size() + 1; i++)
+            {
+                if (i == line_str.size() || line_str[i] == ',' || line_str[i] == '\r')
+                {
+                    if (loc_t_s.empty())
+                    {
+                        continue;
+                    }
+                    if (++commaCount < 4)
+                    { // latitude in column 4 and longtitude in column 5
+                        loc_t_s = "";
+                        continue;
+                    }
+                    if(loc_t_s.size() - digitInt < 6)
+                    {
+                        loc_t_s.append(6 - loc_t_s.size() + digitInt, '0');
+                    }
+                    loc_vec.push_back(std::stoi(loc_t_s));
+                    loc_t_s = "";
+
+                } else if (line_str[i] == '.')
+                {
+                    digitInt = loc_t_s.size();
+                }
+                else
+                {
+                    loc_t_s.append(1, line_str[i]);
+                }
+            }
+            locations.push_back(loc_vec);
+
+            line_index++;
+        }
+        read_in_file.close(); //close the file object.
+    }
+    else
+    {
+        std::cerr << "CSV read failed." << std::endl;
+    }
+
+    return locations;
+}
 
 } // namespace covid19

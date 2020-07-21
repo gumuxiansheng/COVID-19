@@ -10,6 +10,7 @@
 #include "utils/distance_util.h"
 #include "utils/requirements_util.h"
 #include "utils/vector_help.h"
+#include "utils/plot.h"
 #include <random>
 #include <ctime>
 #include <algorithm>
@@ -18,7 +19,7 @@
 namespace covid19
 {
 
-    const int16_t INNER_ROUND = 2;
+    const int16_t INNER_ROUND = 1;
     const int16_t OUTER_ROUND = 1;
     const std::string ASSIGN_VEHICLES_ALG = "regret"; // regret, uniform, uniform_random, uniform_reverse, random
     const std::map<std::string, int> VEHICLE_NUM_MAP = {
@@ -142,6 +143,8 @@ namespace covid19
         std::vector<int> depot{0};
     };
 
+    std::vector<std::vector<int64_t>> nodesPos{};
+
     void AssignVehicles(DataModel &data, const int &input_vehicles, std::string type);
 
     DataModel initDataModel()
@@ -179,7 +182,7 @@ namespace covid19
                 borderCount++;
             }
         }
-        outfile << static_cast<float>(borderCount)/(data.distance_matrix.size()-data.depot.size())<<std::endl;
+        outfile << static_cast<float>(borderCount) / (data.distance_matrix.size() - data.depot.size()) << std::endl;
         outfile.close();
         // End write potential depots
     }
@@ -205,6 +208,16 @@ namespace covid19
             locy = 1;
             locr = 2;
         }
+
+        std::vector<std::vector<int64_t>> nodesPosx(pr_data.nodes.size());
+        for (size_t i = 0; i < pr_data.nodes.size(); i++)
+        {
+            auto node = pr_data.nodes[i];
+            nodesPosx[i].push_back(node[locx]);
+            nodesPosx[i].push_back(node[locy]);
+        }
+        nodesPos = std::move(nodesPosx);
+        
         data.distance_matrix = std::move(covid19::CalcDistances(pr_data.nodes, DistanceType::euclidean, locx, locy));
         data.demands = std::move(covid19::GetNodesRequirements(pr_data.nodes, locr));
         data.vehicles_num_total = pr_data.vehicles;
@@ -223,15 +236,43 @@ namespace covid19
         return data;
     }
 
+    DataModel initWHDataModel(const std::string distance_file_url, const std::string reqirements_file_url, const std::string locations_file_url, const int assign_vehicles = -1)
+    {
+        std::vector<std::vector<int64_t>> locations = std::move(covid19::ReadLocationsCSV(locations_file_url));
+
+        std::vector<std::vector<int64_t>> nodesPosx(locations.size());
+        for (size_t i = 0; i < locations.size(); i++)
+        {
+            auto node = locations[i];
+            nodesPosx[i].push_back(node[0]);
+            nodesPosx[i].push_back(node[1]);
+        }
+        nodesPos = std::move(nodesPosx);
+
+        DataModel data;
+
+        data.distance_matrix = std::move(covid19::ReadDistancesCSV(distance_file_url));
+        data.demands = std::move(covid19::ReadRequirementsCSV(reqirements_file_url));
+        data.vehicles_num_total = 20; // 总共100辆运输车 (总requirement为1051吨，最少需要10辆运输车)
+        data.vehicle_capacity = 110000; // 每辆卡车载重110吨（最大需求为102吨，因此选择110吨卡车，实际上卡车吨位会小很多）
+        data.depot = {92, 93};
+        data.num_vehicles = {10, 10};
+
+        std::cout << std::endl
+                  << "initWHDataModel succeed" << std::endl;
+
+        return data;
+    }
+
     void AssignVehicles(DataModel &data, const int &input_vehicles, std::string type)
     {
         int64_t sum_demands = std::accumulate(data.demands.begin(), data.demands.end(), 0);
         int total_vehicles = std::ceil((float_t)sum_demands / (float_t)data.vehicle_capacity);
-        std::cout << "sum_demands: " << sum_demands << ", total_vehicles: " << total_vehicles << std::endl;
         if (input_vehicles > total_vehicles)
         {
             total_vehicles = input_vehicles;
         }
+        std::cout << "sum_demands: " << sum_demands << ", total_vehicles: " << total_vehicles << std::endl;
 
         if (type == "uniform")
         {
@@ -448,9 +489,8 @@ namespace covid19
             {
                 assign_vehicles = vehicle_map_iter->second;
             }
-            data = initPRDataModel(file_url, type, assign_vehicles);
-
-            OutPutPotentialDepots(data, data_folder, file_name);
+            data = type == "wh" ? initWHDataModel(data_folder + "distances.csv", data_folder + "requirements.csv", data_folder + "locations.csv")
+                                : initPRDataModel(file_url, type, assign_vehicles);
 
             start_time = clock();
 
@@ -489,6 +529,8 @@ namespace covid19
         {
             covid19::OverwriteInitial(data, round_solutions[min_index], round_time[min_index], initial_solution_file_url);
         }
+
+        covid19::PlotUsingGnuplot(file_url, nodesPos, data.depot, round_solutions[min_index]);
     }
 
     void VrpCapacityInitialPotential(const std::string &data_folder, const std::string &file_name, const int round, std::string type)
@@ -506,7 +548,8 @@ namespace covid19
         {
             assign_vehicles = vehicle_map_iter->second;
         }
-        data = initPRDataModel(file_url, type, assign_vehicles);
+        data = type == "wh" ? initWHDataModel(data_folder + "distances.csv", data_folder + "requirements.csv", data_folder + "locations.csv")
+                            : initPRDataModel(file_url, type, assign_vehicles);
 
         OutPutPotentialDepots(data, data_folder, file_name);
     }
@@ -525,6 +568,10 @@ namespace covid19
         {
             return LR_FILES;
         }
+        else if (type == "wh")
+        {
+            return {"wuhandata.txt"};
+        }
         else
         {
             return {};
@@ -540,7 +587,8 @@ namespace covid19
         {
             assign_vehicles = vehicle_map_iter->second;
         }
-        DataModel data = initPRDataModel(file_url, type, assign_vehicles);
+        DataModel data = type == "wh" ? initWHDataModel(data_folder + "distances.csv", data_folder + "requirements.csv", data_folder + "locations.csv")
+                                      : initPRDataModel(file_url, type, assign_vehicles);
         std::vector<int> init_solution = RegretInsersion("cumdistance", data.distance_matrix, data.demands, data.vehicle_capacity, data.num_vehicles, data.depot);
         // std::vector<int> init_solution = Greedy(data.demands, data.vehicle_capacity, data.num_vehicles, data.depot);
 
@@ -588,16 +636,19 @@ namespace covid19
 
 int main(int argc, char **argv)
 {
-    std::cout << "p or pr or lr?" << std::endl;
+    std::cout << "p or pr or lr or wh?" << std::endl;
     std::string type;
     std::cin >> type;
     std::string folder = "/Users/mikezhu/Dev/CPP/COVID-19/data/demo2/";
     if (type == "lr")
     {
         folder += "lr/";
+    } else if (type == "wh") 
+    {
+        folder = "/Users/mikezhu/Dev/CPP/COVID-19/data/";
     }
 
-    covid19::InitialSolutionWithFolder(type, folder);
+     covid19::InitialSolutionWithFolder(type, folder);
 
     for (size_t i = 0; i < covid19::OUTER_ROUND; i++)
     {
