@@ -16,7 +16,7 @@ namespace covid19
 {
     // const int SHAKE_TIMES = 9; // how many shake times should a shaking method run
     // const int search_better_depth = 10;
-    const int WHILE_NUM = 1;
+    const int WHILE_NUM = 8;
 
     bool CheckShaking(const std::vector<int> &nodes_permutation, const std::vector<std::vector<bool>> &potential_depots, const std::vector<int> &depot_indexes, int index1, int index2)
     {

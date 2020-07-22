@@ -20,7 +20,7 @@ namespace covid19
 {
 
     const int16_t INNER_ROUND = 1;
-    const int16_t OUTER_ROUND = 1;
+    const int16_t OUTER_ROUND = 3;
     const std::string ASSIGN_VEHICLES_ALG = "regret"; // regret, uniform, uniform_random, uniform_reverse, random
     const std::map<std::string, int> VEHICLE_NUM_MAP = {
         {"p01_1.txt", 11},
@@ -217,7 +217,7 @@ namespace covid19
             nodesPosx[i].push_back(node[locy]);
         }
         nodesPos = std::move(nodesPosx);
-        
+
         data.distance_matrix = std::move(covid19::CalcDistances(pr_data.nodes, DistanceType::euclidean, locx, locy));
         data.demands = std::move(covid19::GetNodesRequirements(pr_data.nodes, locr));
         data.vehicles_num_total = pr_data.vehicles;
@@ -228,8 +228,11 @@ namespace covid19
         {
             data.vehicles_num_total = assign_vehicles;
         }
-        AssignVehicles(data, data.vehicles_num_total, ASSIGN_VEHICLES_ALG);
-
+        if (assign_vehicles != -2)
+        {
+            AssignVehicles(data, data.vehicles_num_total, ASSIGN_VEHICLES_ALG);
+        }
+        
         std::cout << std::endl
                   << "initPRDataModel succeed" << std::endl;
 
@@ -253,7 +256,7 @@ namespace covid19
 
         data.distance_matrix = std::move(covid19::ReadDistancesCSV(distance_file_url));
         data.demands = std::move(covid19::ReadRequirementsCSV(reqirements_file_url));
-        data.vehicles_num_total = 20; // 总共100辆运输车 (总requirement为1051吨，最少需要10辆运输车)
+        data.vehicles_num_total = 20;   // 总共100辆运输车 (总requirement为1051吨，最少需要10辆运输车)
         data.vehicle_capacity = 110000; // 每辆卡车载重110吨（最大需求为102吨，因此选择110吨卡车，实际上卡车吨位会小很多）
         data.depot = {92, 93};
         data.num_vehicles = {10, 10};
@@ -636,23 +639,53 @@ namespace covid19
 
 int main(int argc, char **argv)
 {
-    std::cout << "p or pr or lr or wh?" << std::endl;
+    std::cout << "p or pr or lr or wh or plot?" << std::endl;
     std::string type;
     std::cin >> type;
+    if (type == "plot")
+    {
+        std::cout << "p or pr or lr or wh?" << std::endl;
+        std::string sub_type;
+        std::cin >> sub_type;
+        std::string folder = "/Users/mikezhu/Dev/CPP/COVID-19/data/demo2/";
+        if (sub_type == "lr")
+        {
+            folder += "lr/";
+        }
+        else if (sub_type == "wh")
+        {
+            folder = "/Users/mikezhu/Dev/CPP/COVID-19/data/";
+        }
+        std::vector<std::string> filenames = covid19::GetFileNames(sub_type, folder);
+        for (auto &&filename : filenames)
+        {
+            std::string fileUrl = folder + filename;
+            covid19::DataModel data = sub_type == "wh" ? covid19::initWHDataModel(folder + "distances.csv", folder + "requirements.csv", folder + "locations.csv")
+                                      : covid19::initPRDataModel(fileUrl, sub_type, -2);
+            filename += ".res";
+            fileUrl = folder + filename;
+            std::vector<int> solution = covid19::ReadResultSolution(fileUrl);
+            covid19::PlotUsingGnuplot(fileUrl, covid19::nodesPos, data.depot, solution);
+        }
+        
+
+        return 0;
+    }
+
     std::string folder = "/Users/mikezhu/Dev/CPP/COVID-19/data/demo2/";
     if (type == "lr")
     {
         folder += "lr/";
-    } else if (type == "wh") 
+    }
+    else if (type == "wh")
     {
         folder = "/Users/mikezhu/Dev/CPP/COVID-19/data/";
     }
 
-     covid19::InitialSolutionWithFolder(type, folder);
+    covid19::InitialSolutionWithFolder(type, folder);
 
     for (size_t i = 0; i < covid19::OUTER_ROUND; i++)
     {
-        // covid19::InitialSolutionWithFolder(type, folder);
         covid19::VrpCapacityWithFolder(type, folder, i);
         // covid19::VrpCapacityWithFolderInitialPotential(type, folder, i);
     }
