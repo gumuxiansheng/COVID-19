@@ -16,3 +16,5 @@ data/demo/initial_solution_x/*
 /.vs
 /.theia
 algorithm.dio.*
+*.txt.cmd
+*.txt.plot

@@ -662,8 +662,7 @@ int main(int argc, char **argv)
             std::string fileUrl = folder + filename;
             covid19::DataModel data = sub_type == "wh" ? covid19::initWHDataModel(folder + "distances.csv", folder + "requirements.csv", folder + "locations.csv")
                                       : covid19::initPRDataModel(fileUrl, sub_type, -2);
-            filename += ".res";
-            fileUrl = folder + filename;
+            fileUrl = folder + "initial_solution/" + filename;
             std::vector<int> solution = covid19::ReadResultSolution(fileUrl);
             covid19::PlotUsingGnuplot(fileUrl, covid19::nodesPos, data.depot, solution);
         }
