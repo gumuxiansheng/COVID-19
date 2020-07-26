@@ -195,7 +195,7 @@ namespace covid19
         covid19::PRDataModel pr_data = type == "lr" ? covid19::ReadLRFloat(file_url) : covid19::ReadPRFloat(file_url);
 
         std::cout << "distance_matrix start: ";
-        int locx, locy, locr{};
+        int locx{1}, locy{2}, locr{4};
         if (type == "p" || type == "pr")
         {
             locx = 1;
