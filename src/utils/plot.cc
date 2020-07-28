@@ -2,40 +2,43 @@
 
 namespace covid19
 {
-    std::vector<std::string> colors{"#0060ad",
-                                    "#dd181f",
-                                    "#006400",
-                                    "#ffa500",
-                                    "#87ceeb",
-                                    "#ee82ee",
-                                    "#a0522d",
-                                    "#4b0082",
-                                    "#000000",
-                                    "#808000",
-                                    "#ffd700",
-                                    "#4682b4",
-                                    "#fa8072",
-                                    "#ff1493",
-                                    "#7e2f8e",
-                                    "#77ac30",
-                                    "#0000ff",
-                                    "#8a2be2",
-                                    "#a52a2a",
-                                    "#5f9ea0",
-                                    "#d2691e",
-                                    "#6495ed",
-                                    "#008b8b",
-                                    "#b8860b",
-                                    "#006400",
-                                    "#ff8c00",
-                                    "#ff1493",
-                                    "#daa520",
-                                    "#7f7f7f",
-                                    "#ff69b4",
-                                    "#f08080",
-                                    "#800000",
-                                    "#0000cd",
-                                    "#ba55d3"};
+    std::vector<std::string> colors{
+        "#0060ad",
+        "#dd181f",
+        "#006400",
+        "#ffa500",
+        "#87ceeb",
+        "#ee82ee",
+        "#a0522d",
+        "#4b0082",
+        "#000000",
+        "#808000",
+        "#ffd700",
+        "#4682b4",
+        "#fa8072",
+        "#ff1493",
+        "#7e2f8e",
+        "#77ac30",
+        "#0000ff",
+        "#8a2be2",
+        "#a52a2a",
+        "#5f9ea0",
+        "#d2691e",
+        "#6495ed",
+        "#008b8b",
+        "#b8860b",
+        "#006400",
+        "#ff8c00",
+        "#ff1493",
+        "#daa520",
+        "#7f7f7f",
+        "#ff69b4",
+        "#f08080",
+        "#800000",
+        "#0000cd",
+        "#ba55d3",
+        "#ab9022",
+    };
     void PlotUsingGnuplot(const std::string fileUrl, const std::vector<std::vector<int64_t>> &nodes, const std::vector<int> &depot_indexes, const std::vector<int> &nodes_permutation)
     {
         std::ofstream outfile;
@@ -51,6 +54,8 @@ namespace covid19
         {
             outCmdFile << "set style line " << std::to_string(i + 1) << " lc rgb '" << colors[i] << "' lt 1 lw 2 pt 7 ps 1.5" << std::endl;
         }
+        outCmdFile << "set style line 100 lc rgb '#C70851' lt 1 lw 2 pt 5 ps 2.5" << std::endl;
+
         outCmdFile << std::endl;
         outCmdFile << "plot ";
 
@@ -70,7 +75,8 @@ namespace covid19
                         outfile << nodes[item][0] << " " << nodes[item][1] << std::endl;
                     }
                     ++num_travel;
-                    outCmdFile << "'" << fileUrl << ".plot" << "' using 2:1 index " << std::to_string(num_travel - 1) << " with linespoints ls " << std::to_string(num_travel % colors.size()) << " notitle, ";
+                    outCmdFile << "'" << fileUrl << ".plot"
+                               << "' using 2:1 index " << std::to_string(num_travel - 1) << " with linespoints ls " << std::to_string(num_travel % colors.size() + 1) << " notitle, ";
 
                     sub_solution.clear();
                     outfile << std::endl
@@ -78,6 +84,16 @@ namespace covid19
                 }
             }
         }
+
+        for (auto &&depot : depot_indexes)
+        {
+            outfile << nodes[depot][0] << " " << nodes[depot][1] << std::endl;
+        }
+        outfile << std::endl
+                << std::endl;
+
+        outCmdFile << "'" << fileUrl << ".plot"
+                   << "' using 2:1 index " << std::to_string(num_travel) << " with points ls 100 notitle, ";
 
         outfile.close();
         outCmdFile.close();
