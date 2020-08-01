@@ -79,6 +79,10 @@ std::vector<int> FitDepot(const std::vector<int> &nodes_permutation, const std::
 
 std::vector<int> ExchangeDepot(const std::vector<int> &nodes_permutation, const std::vector<int> &depotIndexes, const int subRouteNum, const int changeDepot);
 
+std::vector<std::vector<int>> GetSubRoutes(const std::vector<int> &nodes_permutation, const std::vector<int> &depotIndexes);
+
+std::vector<int> RevertSubroutes(const std::vector<std::vector<int>> &subroutes);
+
 
 } // covid19
 

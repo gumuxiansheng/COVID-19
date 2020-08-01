@@ -10,6 +10,13 @@ foreach(EXECUTABLE
   target_compile_features(${EXECUTABLE} PRIVATE cxx_std_11)
 endforeach()
 
+foreach(EXECUTABLE
+  ccvrp_md_minmax)
+  add_executable(${EXECUTABLE} ${EXECUTABLE}.cc utils/file_util.cc utils/distance_util.cc utils/requirements_util.cc utils/vector_help.cc algorithms/vns_minmax.cc algorithms/vns.h algorithms/init_solution.cc algorithms/init_solution.h algorithms/cost.cc algorithms/cost.h algorithms/operators.cc algorithms/operators.h utils/plot.h utils/plot.cc)
+  target_include_directories(${EXECUTABLE} PUBLIC ${PARENT_SOURCE_DIR})
+  target_compile_features(${EXECUTABLE} PRIVATE cxx_std_11)
+endforeach()
+
 set(USE_OR_TOOLS FALSE)
 
 if (NOT USE_OR_TOOLS)

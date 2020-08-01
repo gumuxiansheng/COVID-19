@@ -9,6 +9,7 @@
 #include <vector>
 #include "../utils/vector_help.h"
 #include "../utils/distance_util.h"
+#include "./operators.h"
 
 namespace covid19
 {
@@ -19,6 +20,8 @@ int64_t CalcDistanceCost(const std::vector<int>& nodes_permutation, const std::v
 int64_t CalcDistanceCumCost(const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances, const std::vector<int> &depot_indexes);
 
 int64_t CalcDistanceCumCost(const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances, int depot_index);
+
+int64_t CalcDistanceMinMaxCost(const std::vector<int> &nodes_permutation, const std::vector<std::vector<int64_t>> &distances, const std::vector<int> &depot_indexes);
 
 int64_t CalcCost(const std::string type, const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances, const std::vector<int>& depot_indexes);
 

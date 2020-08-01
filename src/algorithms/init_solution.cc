@@ -7,9 +7,10 @@
 namespace covid19
 {
 
-int DecentCmp(int a,int b)
-{
-    return b<a;
+int DecentCmp(int a,int b);
+
+int DecentCmp(int a, int b) {
+    return b < a;
 }
 
 std::vector<int> Greedy (const std::vector<int64_t>& nodes_requirements, int64_t capacity, const std::vector<int>& num_vehicles, const std::vector<int>& depot_indexes)

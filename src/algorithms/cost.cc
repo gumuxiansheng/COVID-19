@@ -70,6 +70,25 @@ int64_t CalcDistanceCumCost(const std::vector<int>& nodes_permutation, const std
     return CalcDistanceCumCost(nodes_permutation, distances, depot_indexes);
 }
 
+int64_t CalcDistanceMinMaxCost(const std::vector<int> &nodes_permutation, const std::vector<std::vector<int64_t>> &distances, const std::vector<int> &depot_indexes)
+{
+    std::vector<std::vector<int>> routes = std::move(GetSubRoutes(nodes_permutation, depot_indexes));
+    std::vector<int64_t> routesCost(routes.size());
+    int maxRouteCost = 0;
+    int64_t maxRouteI = 0;
+    for (size_t i = 0; i < routes.size(); i++)
+    {
+        auto route = routes[i];
+        routesCost[i] = CalcDistanceCumCost(route, distances, depot_indexes);
+        if (routesCost[i] > maxRouteCost)
+        {
+            maxRouteCost = routesCost[i];
+            maxRouteI = i;
+        }
+    }
+    return maxRouteCost;
+}
+
 int64_t CalcCost(const std::string type, const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances, const std::vector<int>& depot_indexes)
 {
     if (type == "distance")
@@ -78,6 +97,9 @@ int64_t CalcCost(const std::string type, const std::vector<int>& nodes_permutati
     } else if (type == "cumdistance")
     {
         return covid19::CalcDistanceCumCost(nodes_permutation, distances, depot_indexes);
+    } else if (type == "minmax")
+    {
+        return covid19::CalcDistanceMinMaxCost(nodes_permutation, distances, depot_indexes);
     }
 
     return covid19::CalcDistanceCost(nodes_permutation, distances, depot_indexes);
