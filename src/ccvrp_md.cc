@@ -169,6 +169,7 @@ namespace covid19
     {
         std::vector<std::vector<int>> potentialDepotsList(data.distance_matrix.size());
         std::vector<std::vector<bool>> potentialDepots = std::move(PotentialDepots(data.distance_matrix, data.depot, potentialDepotsList));
+        PotentialDepotsExtend(potentialDepots, potentialDepotsList, nodesPos);
         // Write potential depots
         std::ofstream outfile;
         outfile.open(data_folder + "/potential/" + file_name);
@@ -176,7 +177,13 @@ namespace covid19
         for (size_t i = 0; i < potentialDepotsList.size(); i++)
         {
             auto nodePotential = potentialDepotsList[i];
-            outfile << i << " | " << nodePotential.size() << std::endl;
+            outfile << i << " | " << nodePotential.size() << " | ";
+            for (auto &&node : nodePotential)
+            {
+                outfile << node << " ";
+            }
+            outfile << std::endl;
+            
             if (nodePotential.size() == 1)
             {
                 borderCount++;
@@ -671,7 +678,7 @@ int main(int argc, char **argv)
         return 0;
     }
 
-    std::string folder = "/Users/mikezhu/Dev/CPP/COVID-19/data/demo2/";
+    std::string folder = "/Users/mikezhu/Dev/CPP/COVID-19/data/demo3/";
     if (type == "lr")
     {
         folder += "lr/";
@@ -681,12 +688,12 @@ int main(int argc, char **argv)
         folder = "/Users/mikezhu/Dev/CPP/COVID-19/data/";
     }
 
-    covid19::InitialSolutionWithFolder(type, folder);
+    // covid19::InitialSolutionWithFolder(type, folder);
 
     for (size_t i = 0; i < covid19::OUTER_ROUND; i++)
     {
-        covid19::VrpCapacityWithFolder(type, folder, i);
-        // covid19::VrpCapacityWithFolderInitialPotential(type, folder, i);
+        // covid19::VrpCapacityWithFolder(type, folder, i);
+        covid19::VrpCapacityWithFolderInitialPotential(type, folder, i);
     }
 
     return 0;

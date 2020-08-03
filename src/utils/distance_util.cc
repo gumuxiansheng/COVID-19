@@ -77,4 +77,14 @@ std::vector<std::vector<int64_t>> CalcDistances(
     return distances;
 }
 
+float CalcAngle(int x0, int y0, int x1, int y1, int x2, int y2)
+{
+    float ax = x1 - x0;
+    float ay = y1 - y0;
+    float bx = x2 - x0;
+    float by = y2 - y0;
+    float cosVal = (ax*bx + ay*by) / (std::sqrt(ax*ax + ay*ay)) / (std::sqrt(bx*bx + by*by));
+    return std::acos(cosVal)*180/M_PI;
+}
+
 } // namespace covid19

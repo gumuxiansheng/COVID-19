@@ -200,6 +200,42 @@ namespace covid19
         return potentialDepots;
     }
 
+    void PotentialDepotsExtend(std::vector<std::vector<bool>>& potentialDepotsBool, std::vector<std::vector<int>> &potentialDepotsList, const std::vector<std::vector<int64_t>>& nodesPos)
+    {
+        for (size_t i = 0; i < potentialDepotsList.size(); ++i)
+        {
+            int ox = nodesPos[i][0];
+            int oy = nodesPos[i][1];
+            auto potentialDepots = &potentialDepotsList[i];
+            for (std::vector<int>::iterator iter = potentialDepots->begin(); iter != potentialDepots->end(); ++iter)
+            {
+                int depot1 = *iter;
+                int ax = nodesPos[depot1][0];
+                int ay = nodesPos[depot1][1];
+
+                for (std::vector<int>::iterator iterNxt = iter + 1; iterNxt != potentialDepots->end(); )
+                {
+                    int depot2 = *iterNxt;
+                    int bx = nodesPos[depot2][0];
+                    int by = nodesPos[depot2][1];
+
+                    float angle = CalcAngle(ox, oy, ax, ay, bx, by);
+                    if (angle < 30)
+                    {
+                        iterNxt = potentialDepots->erase(iterNxt);
+                        potentialDepotsBool[i][depot2] = false;
+                    } else
+                    {
+                        ++iterNxt;
+                    }
+
+                }
+            }
+            
+        }
+
+    }
+
     std::vector<int> LocalSearch(int iStart, int iEnd, int kStart, int kEnd, const std::string type, const std::vector<int> &permutation, const std::vector<std::vector<int64_t>> &distances, const std::vector<int64_t> &nodes_requirements, int64_t capacity, const std::vector<int> &depot_indexes, int64_t &current_cost, int &count, std::vector<int> (*localSearchMethod)(const std::vector<int> &, int, int), const std::vector<std::vector<bool>> &neighbourReduction, const bool intraOnly)
     {
         return LocalSearch(iStart, iEnd, kStart, kEnd, type, permutation, distances, nodes_requirements, capacity, depot_indexes, current_cost, 0, count, localSearchMethod, neighbourReduction, intraOnly);
