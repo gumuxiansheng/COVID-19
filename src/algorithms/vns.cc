@@ -451,9 +451,11 @@ namespace covid19
 
                 current_permutation = std::move(LocalSearch(1, TRAVEL_SIZE - 3, 1, TRAVEL_SIZE - 1, type, current_permutation, distances, nodes_requirements, capacity, depot_indexes, current_cost, count, ArcNodeMove, neighbourReduction));
 
-                // current_permutation = FitDepot(current_permutation, distances, depot_indexes);
-                current_permutation = std::move(LocalSearchDepot(type, current_permutation, distances, nodes_requirements, capacity, depot_indexes, current_cost, count));
-
+                if (enableDepotChange)
+                {
+                    // current_permutation = FitDepot(current_permutation, distances, depot_indexes);
+                    current_permutation = std::move(LocalSearchDepot(type, current_permutation, distances, nodes_requirements, capacity, depot_indexes, current_cost, count));
+                }
             } while (count <= max_no_improve);
 
             do
@@ -518,9 +520,12 @@ namespace covid19
 
                     shaking = std::move(LocalSearch(1, TRAVEL_SIZE - 2, -1, TRAVEL_SIZE - 1, type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, stappedSteps > current_min_stapped_count ? current_cost : 0, count, TwoOptSwap, neighbourReduction));
 
-                    shaking = FitDepot(shaking, distances, depot_indexes);
-                    shaking = std::move(LocalSearchDepot(type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count));
-
+                    if (enableDepotChange)
+                    {
+                        shaking = FitDepot(shaking, distances, depot_indexes);
+                        shaking = std::move(LocalSearchDepot(type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count));
+                    }
+                    
                 } while (count <= max_no_improve);
 
                 shaking_cost = CalcCost(type, shaking, distances, depot_indexes);
@@ -585,9 +590,12 @@ namespace covid19
 
                     shaking = std::move(LocalSearch(1, TRAVEL_SIZE - 3, 1, TRAVEL_SIZE - 1, type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, stappedSteps > current_min_stapped_count ? current_cost : 0, count, ArcNodeSwap, neighbourReduction));
 
-                    shaking = std::move(LocalSearchDepot(type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count));
+                    if (enableDepotChange)
+                    {
+                        shaking = std::move(LocalSearchDepot(type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count));
 
-                    // shaking = FitDepot(shaking, distances, depot_indexes);
+                        // shaking = FitDepot(shaking, distances, depot_indexes);
+                    }
 
                 } while (count <= max_no_improve);
 
@@ -600,14 +608,19 @@ namespace covid19
                     stappedSteps++;
                 }
 
-                current_permutation = std::move(FitDepot(current_permutation, distances, depot_indexes));
-
+                if (enableDepotChange)
+                {
+                    current_permutation = std::move(FitDepot(current_permutation, distances, depot_indexes));
+                }
                 std::cout << "STAGE 4: Shake Depot" << std::endl;
                 depotBias = 0;
                 do
                 {
-                    // shaking = std::move(ChangeDepot(current_permutation, distances, depot_indexes, CalcDistanceCumCost));
-                    shaking = std::move(ChangeDepotGuided(current_permutation, distances, depot_indexes, potentialDepotsList, potentialDepots, CalcDistanceCumCost));
+                    if (enableDepotChange)
+                    {
+                        // shaking = std::move(ChangeDepot(current_permutation, distances, depot_indexes, CalcDistanceCumCost));
+                        shaking = std::move(ChangeDepotGuided(current_permutation, distances, depot_indexes, potentialDepotsList, potentialDepots, CalcDistanceCumCost));
+                    }
                     do
                     {
 
@@ -621,8 +634,10 @@ namespace covid19
 
                         shaking = std::move(LocalSearch(1, TRAVEL_SIZE - 3, 1, TRAVEL_SIZE - 1, type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, stappedSteps > current_min_stapped_count ? current_cost : 0, count, ArcNodeSwap, neighbourReduction));
 
-                        shaking = std::move(LocalSearchDepot(type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count));
-
+                        if (enableDepotChange)
+                        {
+                            shaking = std::move(LocalSearchDepot(type, shaking, distances, nodes_requirements, capacity, depot_indexes, shaking_cost, count));
+                        }
                     } while (count <= max_no_improve);
 
                     if (shaking_cost < current_cost)
