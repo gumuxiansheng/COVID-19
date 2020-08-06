@@ -11,7 +11,7 @@
 namespace covid19
 {
 
-bool enableDepotChange = true;
+extern bool enableDepotChange;
 
 std::vector<int> Shaking(const std::vector<int> &nodes_permutation, const std::vector<std::vector<bool>> &potential_depots, const std::vector<std::vector<int>> &potentialDepotsList, const std::vector<int> &depot_indexes, std::vector<int> (*shakingMethod)(const std::vector<int> &, int, int));
 

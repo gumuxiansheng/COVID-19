@@ -77,28 +77,28 @@ namespace covid19
     };
     const std::vector<std::string> P_FILES{
         // "p01_1.txt",
-        // "p02_1.txt",
-        // "p03_1.txt",
-        // "p04_1.txt",
-        // "p05_1.txt",
-        // "p06_1.txt",
-        // "p07_1.txt",
+        "p02_1.txt",
+        "p03_1.txt",
+        "p04_1.txt",
+        "p05_1.txt",
+        "p06_1.txt",
+        "p07_1.txt",
         // "p08_1.txt",
-        "p09_1.txt",
-        "p10_1.txt",
-        "p11_1.txt",
-        "p12_1.txt",
-        "p13_1.txt",
-        "p14_1.txt",
-        "p15_1.txt",
-        "p16_1.txt",
-        "p17_1.txt",
-        "p18_1.txt",
-        "p19_1.txt",
-        "p20_1.txt",
-        "p21_1.txt",
-        "p22_1.txt",
-        "p23_1.txt",
+        // "p09_1.txt",
+        // "p10_1.txt",
+        // "p11_1.txt",
+        // "p12_1.txt",
+        // "p13_1.txt",
+        // "p14_1.txt",
+        // "p15_1.txt",
+        // "p16_1.txt",
+        // "p17_1.txt",
+        // "p18_1.txt",
+        // "p19_1.txt",
+        // "p20_1.txt",
+        // "p21_1.txt",
+        // "p22_1.txt",
+        // "p23_1.txt",
     };
     const std::vector<std::string> PR_FILES{
         "pr01_1.txt",
@@ -681,7 +681,7 @@ int main(int argc, char **argv)
         folder = "/Users/mikezhu/Dev/CPP/COVID-19/data/";
     }
 
-    covid19::InitialSolutionWithFolder(type, folder);
+    // covid19::InitialSolutionWithFolder(type, folder);
 
     for (size_t i = 0; i < covid19::OUTER_ROUND; i++)
     {
@@ -691,12 +691,3 @@ int main(int argc, char **argv)
 
     return 0;
 }
-
-// int main(int argc, char **argv)
-// {
-//     std::vector<std::vector<int>> a {{1, 2, 3}, {5, 4}, {6, 9, 0, 8, 7}};
-//     std::vector<std::vector<int>> b {a};
-//     b[0][1] = 10;
-//     std::cout << a[0][1];
-//     return 0;
-// }

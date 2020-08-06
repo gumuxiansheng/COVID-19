@@ -325,6 +325,7 @@ namespace covid19
             }
 
             int64_t min_route_increment = INT64_MAX;
+            int64_t max_route_decrement = 0;
             int64_t cur_minmax{maxRouteCost};
             int64_t cur_total_cost{std::accumulate(routesCost.begin(), routesCost.end(), 0ll)};
             int64_t temp_total_cost{std::accumulate(routesCost.begin(), routesCost.end(), 0ll)};
@@ -359,8 +360,9 @@ namespace covid19
                         routesCostTemp[i] = CalcDistanceCumCost(routeIns, distances, depot_indexes);
                         if (prior_max_cost >= routesCostTemp[i])
                         {
+                            int64_t cur_route_decrement = prior_max_cost - std::max({routesCostTemp[i], *(routesCostTemp.end() - 1), *(routesCostTemp.end() - 2)});
                             int64_t cur_route_increment = routesCostTemp[i] - prior_ins_cost;
-                            if (min_route_increment > cur_route_increment)
+                            if (cur_route_decrement > max_route_decrement)
                             {
                                 std::sort(routesCostTemp.begin(), routesCostTemp.end());
 
@@ -375,13 +377,14 @@ namespace covid19
                                 select_neighbour = std::move(neighbour);
 
                                 min_route_increment = cur_route_increment;
+                                max_route_decrement = cur_route_decrement;
                                 if (current_cost > cur_minmax)
                                 {
                                     current_cost = cur_minmax;
                                 }
                                 while_num = 0;
 
-//                                std::cout << "minmax: " << cur_minmax << "; g_minmax: " << g_cost << std::endl;
+                               std::cout << "minmax: " << cur_minmax << "; g_minmax: " << g_cost << std::endl;
 
                                 if (cur_minmax < g_cost)
                                 {

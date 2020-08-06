@@ -14,6 +14,7 @@
 
 namespace covid19
 {
+    bool enableDepotChange = true;
     // const int SHAKE_TIMES = 9; // how many shake times should a shaking method run
     // const int search_better_depth = 10;
     const int WHILE_NUM = 8;

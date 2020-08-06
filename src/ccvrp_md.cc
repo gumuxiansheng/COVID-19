@@ -263,10 +263,10 @@ namespace covid19
 
         data.distance_matrix = std::move(covid19::ReadDistancesCSV(distance_file_url));
         data.demands = std::move(covid19::ReadRequirementsCSV(reqirements_file_url));
-        data.vehicles_num_total = 34;   // 总共100辆运输车 (总requirement为1051吨，最少需要10辆运输车)
+        data.vehicles_num_total = 24;   // 总共100辆运输车 (总requirement为1051吨，最少需要10辆运输车)
         data.vehicle_capacity = 110000; // 每辆卡车载重110吨（最大需求为102吨，因此选择110吨卡车，实际上卡车吨位会小很多）
         data.depot = {92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107};
-        data.num_vehicles = {1, 10, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+        data.num_vehicles = {1, 5, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 
         std::cout << std::endl
                   << "initWHDataModel succeed" << std::endl;
@@ -689,7 +689,7 @@ int main(int argc, char **argv)
         covid19::enableDepotChange = false;
     }
 
-    // covid19::InitialSolutionWithFolder(type, folder);
+    covid19::InitialSolutionWithFolder(type, folder);
 
     for (size_t i = 0; i < covid19::OUTER_ROUND; i++)
     {
