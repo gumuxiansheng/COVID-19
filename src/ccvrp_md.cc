@@ -143,7 +143,7 @@ namespace covid19
         std::vector<int> depot{0};
     };
 
-    std::vector<std::vector<int64_t>> nodesPos{};
+    
 
     void AssignVehicles(DataModel &data, const int &input_vehicles, std::string type);
 
@@ -676,6 +676,16 @@ int main(int argc, char **argv)
         
 
         return 0;
+    } else
+    {
+        std::cout << "enable PotentialDepots Extend?(Y|N)" << std::endl;
+        std::string extend;
+        std::cin >> extend;
+
+        if (extend == "Y" || extend == "y")
+        {
+            covid19::enablePotentialDepotsExtend = true;
+        }
     }
 
     std::string folder = "/Users/mikezhu/Dev/CPP/COVID-19/data/demo2/";

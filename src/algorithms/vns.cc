@@ -15,6 +15,8 @@
 namespace covid19
 {
     bool enableDepotChange = true;
+    bool enablePotentialDepotsExtend = false;
+    std::vector<std::vector<int64_t>> nodesPos{};
     // const int SHAKE_TIMES = 9; // how many shake times should a shaking method run
     // const int search_better_depth = 10;
     const int WHILE_NUM = 8;
@@ -421,6 +423,11 @@ namespace covid19
 
         std::vector<std::vector<int>> potentialDepotsList(distances.size());
         std::vector<std::vector<bool>> potentialDepots = std::move(PotentialDepots(distances, depot_indexes, potentialDepotsList));
+        if (enablePotentialDepotsExtend)
+        {
+            PotentialDepotsExtend(potentialDepots, potentialDepotsList, nodesPos);
+        }
+
         std::vector<std::vector<bool>> neighbourReduction = std::move(NeighbourReduction(distances, potentialDepots));
         
 
