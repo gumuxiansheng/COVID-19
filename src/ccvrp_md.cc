@@ -20,7 +20,7 @@ namespace covid19
 {
 
     const int16_t INNER_ROUND = 1;
-    const int16_t OUTER_ROUND = 1;
+    const int16_t OUTER_ROUND = 4;
     const std::string ASSIGN_VEHICLES_ALG = "regret"; // regret, uniform, uniform_random, uniform_reverse, random
     const std::map<std::string, int> VEHICLE_NUM_MAP = {
         {"p01_1.txt", 11},
@@ -77,28 +77,28 @@ namespace covid19
     };
     const std::vector<std::string> P_FILES{
         "p01_1.txt",
-        "p02_1.txt",
-        "p03_1.txt",
-        "p04_1.txt",
-        "p05_1.txt",
-        "p06_1.txt",
-        "p07_1.txt",
-        "p08_1.txt",
-        "p09_1.txt",
-        "p10_1.txt",
-        "p11_1.txt",
-        "p12_1.txt",
-        "p13_1.txt",
-        "p14_1.txt",
-        "p15_1.txt",
-        "p16_1.txt",
-        "p17_1.txt",
-        "p18_1.txt",
-        "p19_1.txt",
-        "p20_1.txt",
-        "p21_1.txt",
-        "p22_1.txt",
-        "p23_1.txt",
+        // "p02_1.txt",
+        // "p03_1.txt",
+        // "p04_1.txt",
+        // "p05_1.txt",
+        // "p06_1.txt",
+        // "p07_1.txt",
+        // "p08_1.txt",
+        // "p09_1.txt",
+        // "p10_1.txt",
+        // "p11_1.txt",
+        // "p12_1.txt",
+        // "p13_1.txt",
+        // "p14_1.txt",
+        // "p15_1.txt",
+        // "p16_1.txt",
+        // "p17_1.txt",
+        // "p18_1.txt",
+        // "p19_1.txt",
+        // "p20_1.txt",
+        // "p21_1.txt",
+        // "p22_1.txt",
+        // "p23_1.txt",
     };
     const std::vector<std::string> PR_FILES{
         "pr01_1.txt",
@@ -699,7 +699,7 @@ int main(int argc, char **argv)
         covid19::enableDepotChange = false;
     }
 
-    covid19::InitialSolutionWithFolder(type, folder);
+    // covid19::InitialSolutionWithFolder(type, folder);
 
     for (size_t i = 0; i < covid19::OUTER_ROUND; i++)
     {

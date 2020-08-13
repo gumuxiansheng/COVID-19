@@ -193,6 +193,7 @@ namespace covid19
                     potentialCount++;
                 } else {
                     potentialDepotsx[depot_j_1] = false;
+                    break;
                 }
 
             }

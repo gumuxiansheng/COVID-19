@@ -234,6 +234,7 @@ namespace covid19
                 else
                 {
                     potentialDepotsx[depot_j_1] = false;
+                    break;
                 }
             }
             potentialDepots.push_back(potentialDepotsx);
