@@ -76,9 +76,9 @@ namespace covid19
         {"lr18_1.txt", 25},
     };
     const std::vector<std::string> P_FILES{
-        "p01_1.txt",
+        // "p01_1.txt",
         // "p02_1.txt",
-        // "p03_1.txt",
+        "p03_1.txt",
         // "p04_1.txt",
         // "p05_1.txt",
         // "p06_1.txt",
@@ -699,7 +699,7 @@ int main(int argc, char **argv)
         covid19::enableDepotChange = false;
     }
 
-    // covid19::InitialSolutionWithFolder(type, folder);
+    covid19::InitialSolutionWithFolder(type, folder);
 
     for (size_t i = 0; i < covid19::OUTER_ROUND; i++)
     {

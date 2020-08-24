@@ -258,7 +258,11 @@ std::pair<std::vector<int64_t>, std::vector<std::vector<int>>> CalcRegretValue(c
             }
         }
         std::sort(costs_for_sort.begin(), costs_for_sort.end());
-        cus_regret = costs_for_sort[2] - costs_for_sort[0];
+        if (costs_for_sort.size() > 2)
+        {
+            cus_regret = costs_for_sort[2] - costs_for_sort[0];
+        }
+
         if (available_routes_num < 2)
         { // some customer have only one route to add in.
             cus_regret = INT64_MAX;
