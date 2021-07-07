@@ -9,7 +9,11 @@ class DistanceEuclidean : public DistanceAlgorithm
 public:
     int64_t CalcDistance(int64_t x1, int64_t y1, int64_t x2, int64_t y2) override
     {
-        return (int64_t)pow(pow(x1 - x2, 2) + pow(y1 - y2, 2), 0.5);
+        // x1 *= 100;
+        // y1 *= 100;
+        // x2 *= 100;
+        // y2 *= 100;
+        return (int64_t)std::round(pow(pow(x1 - x2, 2) + pow(y1 - y2, 2), 0.5));
     };
 };
 
@@ -18,6 +22,10 @@ class DistanceManhattan : public DistanceAlgorithm
 public:
     int64_t CalcDistance(int64_t x1, int64_t y1, int64_t x2, int64_t y2) override
     {
+        // x1 *= 100;
+        // y1 *= 100;
+        // x2 *= 100;
+        // y2 *= 100;
         return (int64_t)(abs(x1 - x2) + abs(y1 - y2));
     };
 };
@@ -69,20 +77,14 @@ std::vector<std::vector<int64_t>> CalcDistances(
     return distances;
 }
 
-void WriteResults(const std::vector<int> &nodes_permutation, const std::string file_name)
+float CalcAngle(int x0, int y0, int x1, int y1, int x2, int y2)
 {
-    std::ofstream outfile;
-    outfile.open(file_name);
-    if (!outfile.is_open())
-    {
-        std::cout << "file open failed" << std::endl;
-    }
-
-    for (size_t i = 0; i < nodes_permutation.size(); i++)
-    {
-        outfile << nodes_permutation[i] << " ";
-    }
-    outfile.close();
+    float ax = x1 - x0;
+    float ay = y1 - y0;
+    float bx = x2 - x0;
+    float by = y2 - y0;
+    float cosVal = (ax*bx + ay*by) / (std::sqrt(ax*ax + ay*ay)) / (std::sqrt(bx*bx + by*by));
+    return std::acos(cosVal)*180/M_PI;
 }
 
 } // namespace covid19

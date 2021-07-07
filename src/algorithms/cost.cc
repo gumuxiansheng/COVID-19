@@ -45,7 +45,6 @@ int64_t CalcDistanceCumCost(const std::vector<int> &nodes_permutation, const std
     int64_t total_distance = 0;
     int64_t temp_distance = 0;
 
-    std::vector<int64_t> node_cum_distance{};
     for (int i = 0; i < ARCH_SIZE; i++)
     {
         int start_node_index = nodes_permutation[i];
@@ -58,13 +57,9 @@ int64_t CalcDistanceCumCost(const std::vector<int> &nodes_permutation, const std
         {
             temp_distance = 0;
         }
-        node_cum_distance.push_back(temp_distance);
+        total_distance += temp_distance;
     }
 
-    for (size_t i = 0; i < node_cum_distance.size(); i++)
-    {
-        total_distance += node_cum_distance[i];
-    }
 
     return total_distance;
 }
@@ -75,6 +70,25 @@ int64_t CalcDistanceCumCost(const std::vector<int>& nodes_permutation, const std
     return CalcDistanceCumCost(nodes_permutation, distances, depot_indexes);
 }
 
+int64_t CalcDistanceMinMaxCost(const std::vector<int> &nodes_permutation, const std::vector<std::vector<int64_t>> &distances, const std::vector<int> &depot_indexes)
+{
+    std::vector<std::vector<int>> routes = std::move(GetSubRoutes(nodes_permutation, depot_indexes));
+    std::vector<int64_t> routesCost(routes.size());
+    int maxRouteCost = 0;
+    int64_t maxRouteI = 0;
+    for (size_t i = 0; i < routes.size(); i++)
+    {
+        auto route = routes[i];
+        routesCost[i] = CalcDistanceCumCost(route, distances, depot_indexes);
+        if (routesCost[i] > maxRouteCost)
+        {
+            maxRouteCost = routesCost[i];
+            maxRouteI = i;
+        }
+    }
+    return maxRouteCost;
+}
+
 int64_t CalcCost(const std::string type, const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances, const std::vector<int>& depot_indexes)
 {
     if (type == "distance")
@@ -83,6 +97,9 @@ int64_t CalcCost(const std::string type, const std::vector<int>& nodes_permutati
     } else if (type == "cumdistance")
     {
         return covid19::CalcDistanceCumCost(nodes_permutation, distances, depot_indexes);
+    } else if (type == "minmax")
+    {
+        return covid19::CalcDistanceMinMaxCost(nodes_permutation, distances, depot_indexes);
     }
 
     return covid19::CalcDistanceCost(nodes_permutation, distances, depot_indexes);

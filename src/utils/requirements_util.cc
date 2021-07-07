@@ -10,7 +10,12 @@ bool CheckMultiDepotRequirements(const std::vector<int>& nodes_permutation, cons
     bool is_in_route = true;
     int64_t current_requirements = 0;
 
-    for (int i = 1; i < nodes_permutation.size() - 1; i++)
+    if (!IsIn(current_depot, depot_indexes))
+    {
+        return false;
+    }
+
+    for (int i = 1; i < nodes_permutation.size(); i++)
     {
         // we only need to start from the one after start node because no requirement at the start node.
 

@@ -11,63 +11,21 @@
 namespace covid19
 {
 
-/**
- * swap two nodes
- * @param nodes_permutation
- * @param swap_start_index
- * @param swap_end_index
- * @return
- */
-std::vector<int> TwoSwap(const std::vector<int>& nodes_permutation, int swap_start_index, int swap_end_index);
+extern bool enableDepotChange;
+extern bool enablePotentialDepotsExtend;
+extern std::vector<std::vector<int64_t>> nodesPos;
 
-/**
- * two_opt_swap
- * revert the items between start and end(both include).
- *             start  end
- *               +     +
- *               v     v
- *          +----+-----+----+
- *          |1|2|3|4|5|6|7|8|
- *          +---------------+
- *                  |
- *                  v
- *          +---------------+
- *          |1|2|6|5|4|3|7|8|
- *          +---------------+
- *
- * @param nodes_permutation
- * @param swap_start_index
- * @param swap_end_index
- * @return
- */
-std::vector<int> TwoOptSwap(const std::vector<int>& nodes_permutation, int swap_start_index, int swap_end_index);
+std::vector<int> Shaking(const std::vector<int> &nodes_permutation, const std::vector<std::vector<bool>> &potential_depots, const std::vector<std::vector<int>> &potentialDepotsList, const std::vector<int> &depot_indexes, std::vector<int> (*shakingMethod)(const std::vector<int> &, int, int));
 
-/**
- * two_h_opt_swap
- * move two nodes to the head and order the remain nodes.
- *            swap_1 swap_2
- *               +     +
- *               v     v
- *          +----+-----+----+
- *          |1|2|3|4|5|6|7|8|
- *          +---------------+
- *                  |
- *                  v
- *          +---------------+
- *          |3|6|4|5|7|8|1|2|
- *          +---------------+
- *
- * @param nodes_permutation
- * @param swap_start_index
- * @param swap_end_index
- * @return
- */
-std::vector<int> TwoHOptSwap(const std::vector<int>& nodes_permutation, int swap_1, int swap_2);
+std::vector<std::vector<bool>> PotentialDepots(const std::vector<std::vector<int64_t>> &distances, const std::vector<int> &depot_indexes, std::vector<std::vector<int>> &potentialDepotsList);
 
-std::vector<int> RelocationMove(const std::vector<int>& nodes_permutation, int item_index, int insert_index);
+void PotentialDepotsExtend(std::vector<std::vector<bool>>& potentialDepots, std::vector<std::vector<int>> &potentialDepotsList, const std::vector<std::vector<int64_t>>& nodesPos);
 
-std::vector<int> Shaking(const std::vector<int> &nodes_permutation, std::vector<int> (*shakingMethod)(const std::vector<int> &, int, int));
+std::vector<std::vector<bool>> NeighbourReduction(const std::vector<std::vector<int64_t>> &distances);
 
+std::vector<int> LocalSearch(int iStart, int iEnd, int kStart, int kEnd, const std::string type, const std::vector<int> &permutation, const std::vector<std::vector<int64_t>> &distances, const std::vector<int64_t> &nodes_requirements, int64_t capacity, const std::vector<int> &depot_indexes, int64_t &current_cost, int &count, std::vector<int> (*localSearchMethod)(const std::vector<int> &, int, int), const std::vector<std::vector<bool>> &neighbourReduction, const bool intraOnly = false);
+
+std::vector<int> LocalSearch(int iStart, int iEnd, int kStart, int kEnd, const std::string type, const std::vector<int> &permutation, const std::vector<std::vector<int64_t>> &distances, const std::vector<int64_t> &nodes_requirements, int64_t capacity, const std::vector<int> &depot_indexes, int64_t &current_cost, const int64_t global_cost_min, int &count, std::vector<int> (*localSearchMethod)(const std::vector<int> &, int, int), const std::vector<std::vector<bool>> &neighbourReduction, const bool intraOnly = false);
 /**
  * VNS(Variable Neighborhood Search) for multi depots with initial solution
  * @param type, type of the cost function, "distance" or "cumdistance"
@@ -78,7 +36,7 @@ std::vector<int> Shaking(const std::vector<int> &nodes_permutation, std::vector<
  * @param depot_indexes
  * @return
  */
-std::vector<int> Vns (const std::string type, const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, const std::vector<int>& depot_indexes);
+std::vector<int> Vns (const std::string type, const std::vector<int>& nodes_permutation, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, const std::vector<int>& depot_indexes, const int vehicles_num = 35);
 
 /**
  * VNS(Variable Neighborhood Search) for multi depots
@@ -90,7 +48,7 @@ std::vector<int> Vns (const std::string type, const std::vector<int>& nodes_perm
  * @param depot_indexes
  * @return
  */
-std::vector<int> Vns (const std::string type, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, const std::vector<int>& num_vehicles, const std::vector<int>& depot_indexes);
+std::vector<int> VnsGreedy (const std::string type, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, const std::vector<int>& num_vehicles, const std::vector<int>& depot_indexes);
 
 /**
  * VNS(Variable Neighborhood Search) for single depot
@@ -102,7 +60,7 @@ std::vector<int> Vns (const std::string type, const std::vector<std::vector<int6
  * @param depot_index
  * @return
  */
-std::vector<int> Vns (const std::string type, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, int num_vehicles, int depot_index);
+std::vector<int> VnsSingle (const std::string type, const std::vector<std::vector<int64_t>>& distances, const std::vector<int64_t>& nodes_requirements, int64_t capacity, int num_vehicles, int depot_index);
 
 }
 

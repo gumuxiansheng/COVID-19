@@ -9,7 +9,12 @@ ortoolsbuilds_multiple/*
 ortoolsbuild/*
 .DS_Store
 CMakeSettings.json
+data/demo/initial_solution_x/*
+
 
 /.idea
 /.vs
 /.theia
+algorithm.dio.*
+*.txt.cmd
+*.txt.plot

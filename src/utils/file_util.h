@@ -5,6 +5,8 @@
 #include <vector>
 #include <fstream>
 #include <string>
+// #include <dirent.h>
+// #include <stdlib.h>
 
 namespace covid19
 {
@@ -26,9 +28,21 @@ ChristofidesDataModel ReadChristofides(const std::string &file_name);
 
 PRDataModel ReadPR(const std::string &file_name);
 
+PRDataModel ReadPRFloat(const std::string &file_name);
+
+PRDataModel ReadLRFloat(const std::string &file_name);
+
+std::vector<int> ReadResultSolution(const std::string &file_name);
+
 std::vector<int64_t> GetNodesRequirements(std::vector<std::vector<int64_t>> nodes, int requirement_col = 2);
 
 std::vector<std::vector<int64_t>> ReadDistancesCSV(const std::string &file_name);
+
+std::vector<int64_t> ReadRequirementsCSV(const std::string &file_name);
+
+std::vector<std::vector<int64_t>> ReadLocationsCSV(const std::string &file_name);
+
+// std::vector<std::string> ListFiles(std::string folder);
 
 } // namespace covid19
 
